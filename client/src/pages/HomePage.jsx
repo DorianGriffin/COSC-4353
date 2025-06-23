@@ -1,24 +1,30 @@
 import React from 'react';
+import './HomePage.css';
+import heroImage from './assets/hero.png';
 
 const HomePage = () => {
   return (
-    <div className="min-h-screen bg-white">
-      <nav className="bg-blue-600 text-white p-4">
-        <h1 className="text-2xl font-bold">VolunteerApp</h1>
+    <div className="home-container">
+      <nav className="navbar">
+        <div className="logo">VolunteerApp</div>
+        <div className="nav-links">
+          <button className="nav-button">Login</button>
+          <button className="nav-button primary">Get Started</button>
+        </div>
       </nav>
 
-      <main className="p-8">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">Welcome to VolunteerApp</h2>
-        <p className="text-gray-600 mb-4">
-          Connect with your community, track your impact, and make a difference.
-        </p>
+      <section className="hero">
+        <div className="hero-text">
+          <h1>Make an Impact, Locally & Globally</h1>
+          <p>Find volunteer opportunities that match your passion and skills.</p>
+          <button className="cta-button">Join Now</button>
+        </div>
+        <div className="hero-image">
+          <img src={heroImage} alt="Helping hands" />
+        </div>
+      </section>
 
-        <button className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition">
-          Get Started
-        </button>
-      </main>
-
-      <footer className="bg-gray-900 text-white p-4 text-center">
+      <footer className="footer">
         <p>&copy; 2025 VolunteerApp. All rights reserved.</p>
       </footer>
     </div>
