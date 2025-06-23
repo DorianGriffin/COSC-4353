@@ -1,18 +1,17 @@
+import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import Navbar from './components/Navbar';
+import HomePage from './pages/HomePage';
+
 
 function App() {
   return (
-    <Router>
-      <Navbar />
-      <Routes>
-      <Route path="/" element={<h1>Welcome to the Volunteer App</h1>} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-      </Routes>
-    </Router>
+      <Router>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+          </Routes>
+        </div>
+      </Router>
   );
 }
 
