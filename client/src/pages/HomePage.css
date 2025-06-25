@@ -10,7 +10,7 @@
   .logo {
     font-size: 1.5rem;
     font-weight: bold;
-    color: #1e3a8a;
+    color: #C8102E;
   }
   
   .nav-links .nav-button {
@@ -19,15 +19,15 @@
     border: none;
     font-weight: 500;
     cursor: pointer;
-    color: #1e3a8a;
+    color: #C8102E;
   }
   .nav-links .nav-button:hover {
-    color: #0d1333;
+    color: #C8102E;
     text-decoration: underline;
   }
   
   .nav-button.primary {
-    background-color: #1e3a8a;
+    background-color: #C8102E;
     color: white;
     padding: 0.5rem 1rem;
     border-radius: 6px;
@@ -47,7 +47,7 @@
   .hero-text h1 {
     font-size: 2.5rem;
     margin-bottom: 1rem;
-    color: #1e3a8a;
+    color: #C8102E;
   }
   
   .hero-text p {
@@ -56,7 +56,7 @@
   }
   
   .cta-button {
-    background-color: #1e3a8a;
+    background-color: #C8102E;
     color: white;
     border: none;
     padding: 0.75rem 1.5rem;
@@ -95,7 +95,7 @@
   .hero-title {
     font-size: 3rem;
     font-weight: 800;
-    color: #1a237e;
+    color: #C8102E;
     margin-bottom: 1rem;
   }
   
@@ -105,7 +105,7 @@
     margin-bottom: 2rem;
   }
   .hero-button {
-    background-color: #1a237e;
+    background-color: #C8102E;
     color: white;
     padding: 0.75rem 1.5rem;
     border-radius: 8px;
