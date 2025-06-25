@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Login from './pages/LoginPage';
+import NotificationsPage from './pages/NotificationsPage';
 import VolunteerHistoryPage from './pages/VolunteerHistoryPage'; 
 
 function App() {
@@ -10,6 +11,7 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/volunteer-history" element={<VolunteerHistoryPage />} />
       </Routes>
     </Router>
