@@ -1,5 +1,7 @@
 import React from 'react';
 import './HomePage.css';
+import Login from './LoginPage';
+import RegisterPage from './RegisterPage';
 import heroImage from './assets/hero.png';
 
 const HomePage = () => {
@@ -8,11 +10,10 @@ const HomePage = () => {
       <nav className="navbar">
         <div className="logo">VolunteerApp</div>
         <div className="nav-links">
-          <button className="nav-button">Login</button>
-          <button className="nav-button primary">Get Started</button>
+          <button className="nav-button" onClick={Login}>Login</button>
+          <button className="nav-button primary" onClick ={RegisterPage}>Get Started</button>
         </div>
       </nav>
-
       <section className="hero">
         <div className="hero-text">
           <h1>Make an Impact, Locally & Globally</h1>
