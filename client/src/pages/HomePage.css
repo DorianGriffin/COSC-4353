@@ -1,7 +1,7 @@
 .home-container {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  background-color: #f9fafc;
-  color: #333;
+  background-color: #f8f9fa;
+  color: #2d3748;
   margin: 0;
   padding: 0;
   line-height: 1.6;
@@ -29,8 +29,8 @@
 .logo {
   font-size: 1.8rem;
   font-weight: bold;
-  color: #1e3a8a;
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  color: #2c5aa0;
+  background: linear-gradient(135deg, #2c5aa0, #4a90e2);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -47,32 +47,32 @@
   border: none;
   font-weight: 500;
   cursor: pointer;
-  color: #1e3a8a;
+  color: #4a5568;
   padding: 0.5rem 1rem;
   border-radius: 6px;
   transition: all 0.3s ease;
 }
 
 .nav-button:hover {
-  color: #0d1333;
-  background-color: #f0f4ff;
+  color: #2d3748;
+  background-color: #f7fafc;
 }
 
 .nav-button.primary {
-  background-color: #1e3a8a;
+  background-color: #c8102e;
   color: white;
   font-weight: 600;
 }
 
 .nav-button.primary:hover {
-  background-color: #0d1333;
+  background-color: #a00e26;
   transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(30, 58, 138, 0.3);
+  box-shadow: 0 4px 12px rgba(200, 16, 46, 0.3);
 }
 
 /* Hero Section */
 .hero {
-  background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 100%);
+  background: linear-gradient(135deg, #f7fafc 0%, #ffffff 100%);
   padding: 6rem 2rem;
   overflow: hidden;
 }
@@ -88,7 +88,7 @@
 
 .hero-badge {
   display: inline-block;
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #c8102e, #a00e26);
   color: white;
   padding: 0.5rem 1rem;
   border-radius: 20px;
@@ -100,13 +100,13 @@
 .hero-text h1 {
   font-size: 3.5rem;
   font-weight: 800;
-  color: #1a237e;
+  color: #2d3748;
   margin-bottom: 1.5rem;
   line-height: 1.1;
 }
 
 .highlight {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #c8102e, #a00e26);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -114,7 +114,7 @@
 
 .hero-text p {
   font-size: 1.2rem;
-  color: #666;
+  color: #4a5568;
   margin-bottom: 2.5rem;
   line-height: 1.7;
 }
@@ -139,23 +139,23 @@
 }
 
 .cta-button.primary {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #c8102e, #a00e26);
   color: white;
 }
 
 .cta-button.primary:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(30, 58, 138, 0.3);
+  box-shadow: 0 8px 25px rgba(200, 16, 46, 0.3);
 }
 
 .cta-button.secondary {
   background: white;
-  color: #1e3a8a;
-  border: 2px solid #1e3a8a;
+  color: #c8102e;
+  border: 2px solid #c8102e;
 }
 
 .cta-button.secondary:hover {
-  background: #1e3a8a;
+  background: #c8102e;
   color: white;
 }
 
@@ -199,19 +199,19 @@
 
 .card-title {
   font-weight: 600;
-  color: #333;
+  color: #2d3748;
   font-size: 0.9rem;
 }
 
 .card-value {
   font-weight: 700;
-  color: #1e3a8a;
+  color: #c8102e;
   font-size: 1.1rem;
 }
 
 /* Stats Section */
 .stats-section {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #2d3748, #4a5568);
   color: white;
   padding: 4rem 0;
 }
@@ -248,13 +248,13 @@
 .section-header h2 {
   font-size: 2.5rem;
   font-weight: 700;
-  color: #1a237e;
+  color: #2d3748;
   margin-bottom: 1rem;
 }
 
 .section-header p {
   font-size: 1.1rem;
-  color: #666;
+  color: #4a5568;
   max-width: 600px;
   margin: 0 auto;
 }
@@ -272,12 +272,13 @@
   text-align: center;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
   transition: all 0.3s ease;
-  border: 1px solid #f0f0f0;
+  border: 1px solid #e2e8f0;
 }
 
 .feature-card:hover {
   transform: translateY(-5px);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+  border-color: #c8102e;
 }
 
 .feature-icon {
@@ -288,19 +289,19 @@
 .feature-card h3 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #1a237e;
+  color: #2d3748;
   margin-bottom: 1rem;
 }
 
 .feature-card p {
-  color: #666;
+  color: #4a5568;
   line-height: 1.6;
 }
 
 /* How It Works Section */
 .how-it-works {
   padding: 6rem 0;
-  background: #f9fafc;
+  background: #f8f9fa;
 }
 
 .steps-grid {
@@ -316,7 +317,7 @@
 }
 
 .step-number {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #c8102e, #a00e26);
   color: white;
   width: 60px;
   height: 60px;
@@ -332,12 +333,12 @@
 .step-content h3 {
   font-size: 1.3rem;
   font-weight: 600;
-  color: #1a237e;
+  color: #2d3748;
   margin-bottom: 0.5rem;
 }
 
 .step-content p {
-  color: #666;
+  color: #4a5568;
   line-height: 1.6;
 }
 
@@ -354,15 +355,15 @@
 }
 
 .testimonial-card {
-  background: #f9fafc;
+  background: #f8f9fa;
   padding: 2rem;
   border-radius: 20px;
-  border-left: 4px solid #1e3a8a;
+  border-left: 4px solid #c8102e;
 }
 
 .testimonial-content p {
   font-style: italic;
-  color: #555;
+  color: #4a5568;
   margin-bottom: 1.5rem;
   line-height: 1.7;
 }
@@ -379,17 +380,17 @@
 
 .author-name {
   font-weight: 600;
-  color: #1a237e;
+  color: #2d3748;
 }
 
 .author-role {
-  color: #666;
+  color: #4a5568;
   font-size: 0.9rem;
 }
 
 /* CTA Section */
 .cta-section {
-  background: linear-gradient(135deg, #1e3a8a, #3b82f6);
+  background: linear-gradient(135deg, #c8102e, #a00e26);
   color: white;
   padding: 6rem 0;
   text-align: center;
@@ -412,8 +413,8 @@
 
 /* Footer */
 .footer {
-  background: #111;
-  color: #eee;
+  background: #1a202c;
+  color: #e2e8f0;
   padding: 4rem 0 2rem;
 }
 
@@ -427,12 +428,12 @@
 .footer-logo {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #3b82f6;
+  color: #2c5aa0;
   margin-bottom: 1rem;
 }
 
 .footer-section p {
-  color: #ccc;
+  color: #a0aec0;
   margin-bottom: 1.5rem;
   line-height: 1.6;
 }
@@ -453,13 +454,13 @@
 }
 
 .footer-section ul li a {
-  color: #ccc;
+  color: #a0aec0;
   text-decoration: none;
   transition: color 0.3s ease;
 }
 
 .footer-section ul li a:hover {
-  color: #3b82f6;
+  color: #c8102e;
 }
 
 .social-links {
@@ -478,10 +479,10 @@
 }
 
 .footer-bottom {
-  border-top: 1px solid #333;
+  border-top: 1px solid #2d3748;
   padding-top: 2rem;
   text-align: center;
-  color: #999;
+  color: #718096;
 }
 
 /* Responsive Design */
