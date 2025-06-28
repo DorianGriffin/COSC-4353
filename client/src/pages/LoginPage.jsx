@@ -20,7 +20,7 @@ const LoginPage = () => {
       ...formData,
       [e.target.name]: e.target.value,
     })
-    setMessage("") // Clear message when user types
+    setMessage("")
   }
 
   const handleSubmit = async (e) => {
@@ -68,23 +68,20 @@ const LoginPage = () => {
     <div className="auth-container">
       <div className="auth-background">
         <div className="auth-card">
-          {/* Back to Home Button */}
           <button className="back-home-button" onClick={() => navigate("/")}>
             ← Back to Home
           </button>
 
-          {/* Header */}
           <div className="auth-header">
             <div className="logo">VolunteerApp</div>
             <h1 className="auth-title">Welcome Back</h1>
             <p className="auth-subtitle">Sign in to continue making an impact</p>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <label htmlFor="username" className="form-label">
-                Username
+                Email or Username
               </label>
               <input
                 type="text"
@@ -93,7 +90,7 @@ const LoginPage = () => {
                 value={formData.username}
                 onChange={handleInputChange}
                 className="form-input"
-                placeholder="Enter your username"
+                placeholder="Enter your email or username"
                 required
               />
             </div>
@@ -124,13 +121,12 @@ const LoginPage = () => {
                   <span className="spinner"></span>
                   Signing in...
                 </span>
-              ) : (   
+              ) : (
                 "Sign In"
               )}
             </button>
           </form>
 
-          {/* Switch to Register */}
           <div className="auth-switch">
             <p>
               Don't have an account?{" "}
@@ -140,14 +136,12 @@ const LoginPage = () => {
             </p>
           </div>
 
-          {/* Demo Credentials */}
           <div className="demo-info">
             <p className="demo-title">Demo Credentials:</p>
             <p className="demo-text">Username: test | Password: test</p>
           </div>
         </div>
 
-        {/* Side Panel */}
         <div className="auth-side-panel">
           <div className="side-content">
             <h2>Welcome Back!</h2>
