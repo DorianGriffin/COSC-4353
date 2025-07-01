@@ -249,13 +249,10 @@ const AdminEventManagement = () => {
         <div className="admin-logo">VolunteerApp Admin</div>
         <div className="admin-nav-links">
           <button className="nav-btn active">Manage Events</button>
-          <button className="nav-btn">Volunteer Matching</button>
-          <button className="nav-btn" onClick={() => navigate("/dashboard")}>
-            Back to Dashboard
-          </button>
+          <button className="nav-btn" onClick={() => navigate("/matching")}>Volunteer Matching</button>
+          <button className="nav-btn" onClick={() => navigate("/dashboard")}>Back to Dashboard</button>
         </div>
       </nav>
-
       <div className="admin-content">
         <div className="admin-header">
           <h1>Event Management</h1>
