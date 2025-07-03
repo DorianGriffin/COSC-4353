@@ -3,6 +3,12 @@ const cors = require("cors")
 
 const app = express()
 
+
+const notificationsRouter = require("./routes/notificationsroutes")
+const volunteerHistoryRouter = require('./routes/volunteerHistory');
+
+// Simple CORS
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -10,6 +16,8 @@ app.use(
   })
 )
 app.use(express.json())
+app.use("/api/notifications", notificationsRouter)
+app.use('/api/volunteer-history', volunteerHistoryRouter);
 
 // connect db
 let db = null
