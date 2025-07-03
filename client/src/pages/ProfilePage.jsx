@@ -78,7 +78,7 @@ const ProfilePage = () => {
         user.profile_completed = 1;
         localStorage.setItem("user", JSON.stringify(user));
         setMessage("Profile completed successfully!");
-        setTimeout(() => navigate("/dashboard"), 1500);
+        setTimeout(() => navigate("/volunteer-dashboard"), 1500);
       } else {
         setMessage(data.message || "Could not mark profile complete.");
       }

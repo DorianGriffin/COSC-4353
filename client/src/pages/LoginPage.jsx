@@ -51,16 +51,16 @@ const LoginPage = () => {
         localStorage.setItem("user", JSON.stringify(data.user));
         setMessage("Login successful! Redirecting...");
       
-        if (data.user.profile_completed) {
-          setTimeout(() => {
-            navigate("/dashboard");
-          }, 1500);
-        } else {
-          setTimeout(() => {
+        const user = data.user;
+      
+        setTimeout(() => {
+          if (user.profile_completed === 0) {
             navigate("/profile");
-          }, 1500);
-        }
-      }
+          } else {
+            navigate("/volunteer-dashboard");
+          }
+        }, 1500);
+      }      
        else {
         setMessage(data.message || "Login failed")
       }
