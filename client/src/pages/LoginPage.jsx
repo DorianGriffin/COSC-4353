@@ -48,12 +48,20 @@ const LoginPage = () => {
       const data = await response.json()
 
       if (response.ok) {
-        localStorage.setItem("user", JSON.stringify(data.user))
-        setMessage("Login successful! Redirecting...")
-        setTimeout(() => {
-          navigate("/dashboard")
-        }, 1500)
-      } else {
+        localStorage.setItem("user", JSON.stringify(data.user));
+        setMessage("Login successful! Redirecting...");
+      
+        if (data.user.profile_completed) {
+          setTimeout(() => {
+            navigate("/dashboard");
+          }, 1500);
+        } else {
+          setTimeout(() => {
+            navigate("/profile");
+          }, 1500);
+        }
+      }
+       else {
         setMessage(data.message || "Login failed")
       }
     } catch (error) {
