@@ -1,16 +1,16 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import "./AdminEventManagement.css"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "./AdminEventManagement.css";
 
 const AdminEventManagement = () => {
-  const [events, setEvents] = useState([])
-  const [showForm, setShowForm] = useState(false)
-  const [editingEvent, setEditingEvent] = useState(null)
-  const [message, setMessage] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const [events, setEvents] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState(null);
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -23,120 +23,71 @@ const AdminEventManagement = () => {
     urgency_level: "",
     start_datetime: "",
     end_datetime: "",
-  })
+  });
 
-  const SERVER_URL = "http://localhost:8080"
-
-  // US States for dropdown
+  // US states
   const states = [
-    "AL",
-    "AK",
-    "AZ",
-    "AR",
-    "CA",
-    "CO",
-    "CT",
-    "DE",
-    "FL",
-    "GA",
-    "HI",
-    "ID",
-    "IL",
-    "IN",
-    "IA",
-    "KS",
-    "KY",
-    "LA",
-    "ME",
-    "MD",
-    "MA",
-    "MI",
-    "MN",
-    "MS",
-    "MO",
-    "MT",
-    "NE",
-    "NV",
-    "NH",
-    "NJ",
-    "NM",
-    "NY",
-    "NC",
-    "ND",
-    "OH",
-    "OK",
-    "OR",
-    "PA",
-    "RI",
-    "SC",
-    "SD",
-    "TN",
-    "TX",
-    "UT",
-    "VT",
-    "VA",
-    "WA",
-    "WV",
-    "WI",
-    "WY",
-  ]
+    "AL","AK","AZ","AR","CA","CO","CT","DE","FL","GA","HI","ID","IL","IN","IA","KS",
+    "KY","LA","ME","MD","MA","MI","MN","MS","MO","MT","NE","NV","NH","NJ","NM","NY",
+    "NC","ND","OH","OK","OR","PA","RI","SC","SD","TN","TX","UT","VT","VA","WA","WV","WI","WY"
+  ];
 
-  // Available skills for multi-select
+  // skills
   const availableSkills = [
-    "First Aid",
-    "CPR",
-    "Communication",
-    "Leadership",
-    "Organization",
-    "Physical Labor",
-    "Teaching",
-    "Cooking",
-    "Driving",
-    "Technology",
-    "Translation",
-    "Medical",
-    "Construction",
-    "Event Planning",
-    "Fundraising",
-  ]
+    "First Aid", "CPR", "Communication", "Leadership", "Organization", "Physical Labor",
+    "Teaching", "Cooking", "Driving", "Technology", "Translation", "Medical", "Construction",
+    "Event Planning", "Fundraising"
+  ];
 
-  // Urgency levels
-  const urgencyLevels = ["low", "medium", "high", "critical"]
+  const urgencyLevels = ["low", "medium", "high", "critical"];
 
   useEffect(() => {
-    fetchEvents()
-  }, [])
-
-  const fetchEvents = async () => {
-    try {
-      const response = await fetch(`${SERVER_URL}/api/events`)
-      const data = await response.json()
-      if (response.ok) {
-        setEvents(data.events || [])
+    // mock events
+    setEvents([
+      {
+        event_id: 1,
+        name: "Park Clean Up",
+        description: "Help clean the local park",
+        City: "Houston",
+        State: "TX",
+        zip: "77004",
+        urgency_level: "medium",
+        required_skills: ["Physical Labor", "Organization"],
+        start_datetime: "2025-08-01T09:00",
+        end_datetime: "2025-08-01T12:00"
+      },
+      {
+        event_id: 2,
+        name: "Food Drive",
+        description: "Assist with sorting food donations",
+        City: "Dallas",
+        State: "TX",
+        zip: "75201",
+        urgency_level: "high",
+        required_skills: ["Organization", "Leadership"],
+        start_datetime: "2025-08-05T10:00",
+        end_datetime: "2025-08-05T14:00"
       }
-    } catch (error) {
-      console.error("Error fetching events:", error)
-      setMessage("Error loading events")
-    }
-  }
+    ]);
+  }, []);
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value,
-    }))
-    setMessage("")
-  }
+      [name]: value
+    }));
+    setMessage("");
+  };
 
   const handleSkillsChange = (skill) => {
     setFormData((prev) => ({
       ...prev,
       required_skills: prev.required_skills.includes(skill)
         ? prev.required_skills.filter((s) => s !== skill)
-        : [...prev.required_skills, skill],
-    }))
-  }
+        : [...prev.required_skills, skill]
+    }));
+  };
 
   const resetForm = () => {
     setFormData({
@@ -150,17 +101,16 @@ const AdminEventManagement = () => {
       urgency_level: "",
       start_datetime: "",
       end_datetime: "",
-    })
-    setEditingEvent(null)
-    setShowForm(false)
-  }
+    });
+    setEditingEvent(null);
+    setShowForm(false);
+  };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setMessage("")
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
 
-    // Validation
     if (
       !formData.name ||
       !formData.description ||
@@ -170,40 +120,32 @@ const AdminEventManagement = () => {
       !formData.urgency_level ||
       formData.required_skills.length === 0
     ) {
-      setMessage("Please fill in all required fields")
-      setIsLoading(false)
-      return
+      setMessage("Please fill in all required fields");
+      setIsLoading(false);
+      return;
     }
 
-    try {
-      const url = editingEvent ? `${SERVER_URL}/api/events/${editingEvent.event_id}` : `${SERVER_URL}/api/events`
-
-      const method = editingEvent ? "PUT" : "POST"
-
-      const response = await fetch(url, {
-        method,
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-      })
-
-      const data = await response.json()
-
-      if (response.ok) {
-        setMessage(editingEvent ? "Event updated successfully!" : "Event created successfully!")
-        fetchEvents()
-        resetForm()
-      } else {
-        setMessage(data.message || "Operation failed")
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      setMessage("Server error. Please try again.")
-    } finally {
-      setIsLoading(false)
+    if (editingEvent) {
+      // edit
+      setEvents((prev) =>
+        prev.map((ev) => ev.event_id === editingEvent.event_id
+          ? { ...formData, event_id: editingEvent.event_id }
+          : ev
+        )
+      );
+      setMessage("Event updated successfully!");
+    } else {
+      // create
+      setEvents((prev) => [
+        ...prev,
+        { ...formData, event_id: Date.now() }
+      ]);
+      setMessage("Event created successfully!");
     }
-  }
+
+    resetForm();
+    setIsLoading(false);
+  };
 
   const handleEdit = (event) => {
     setFormData({
@@ -217,42 +159,32 @@ const AdminEventManagement = () => {
       urgency_level: event.urgency_level || "",
       start_datetime: event.start_datetime ? event.start_datetime.slice(0, 16) : "",
       end_datetime: event.end_datetime ? event.end_datetime.slice(0, 16) : "",
-    })
-    setEditingEvent(event)
-    setShowForm(true)
-  }
+    });
+    setEditingEvent(event);
+    setShowForm(true);
+  };
 
-  const handleDelete = async (eventId) => {
-    if (!("Are you sure you want to delete this event?")) return
-
-    try {
-      const response = await fetch(`${SERVER_URL}/api/events/${eventId}`, {
-        method: "DELETE",
-      })
-
-      if (response.ok) {
-        setMessage("Event deleted successfully!")
-        fetchEvents()
-      } else {
-        setMessage("Failed to delete event")
-      }
-    } catch (error) {
-      console.error("Error:", error)
-      setMessage("Server error")
-    }
-  }
+  const handleDelete = (eventId) => {
+    if (!window.confirm("Are you sure you want to delete this event?")) return;
+    setEvents((prev) => prev.filter((ev) => ev.event_id !== eventId));
+    setMessage("Event deleted successfully!");
+  };
 
   return (
     <div className="admin-container">
-      {/* Admin Navigation */}
       <nav className="admin-navbar">
         <div className="admin-logo">VolunteerApp Admin</div>
         <div className="admin-nav-links">
           <button className="nav-btn active">Manage Events</button>
-          <button className="nav-btn" onClick={() => navigate("/adminvolunteermatching")}>Volunteer Matching</button>
-          <button className="nav-btn" onClick={() => navigate("/dashboard")}>Back to Dashboard</button>
+          <button className="nav-btn" onClick={() => navigate("/adminvolunteermatching")}>
+            Volunteer Matching
+          </button>
+          <button className="nav-btn" onClick={() => navigate("/dashboard")}>
+            Back to Dashboard
+          </button>
         </div>
       </nav>
+
       <div className="admin-content">
         <div className="admin-header">
           <h1>Event Management</h1>
@@ -262,156 +194,135 @@ const AdminEventManagement = () => {
         </div>
 
         {message && (
-          <div className={`message ${message.includes("successfully") ? "success" : "error"}`}>{message}</div>
+          <div className={`message ${message.includes("successfully") ? "success" : "error"}`}>
+            {message}
+          </div>
         )}
 
-        {/* Event Form */}
         {showForm && (
           <div className="event-form-container">
             <h2>{editingEvent ? "Edit Event" : "Create New Event"}</h2>
             <form onSubmit={handleSubmit} className="event-form">
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">Event Name *</label>
+                  <label>Event Name *</label>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
-                    className="form-input"
-                    placeholder="Enter event name"
+                    placeholder="Event name"
                     required
                   />
                 </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Event Description *</label>
+                <label>Event Description *</label>
                 <textarea
                   name="description"
                   value={formData.description}
                   onChange={handleInputChange}
-                  className="form-textarea"
-                  placeholder="Describe the event..."
-                  rows="4"
+                  placeholder="Describe the event"
                   required
                 />
               </div>
 
               <div className="form-group">
-                <label className="form-label">Location Details</label>
+                <label>Location Details</label>
                 <textarea
                   name="location"
                   value={formData.location}
                   onChange={handleInputChange}
-                  className="form-textarea"
-                  placeholder="Additional location details..."
-                  rows="2"
+                  placeholder="Additional location details"
                 />
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">City *</label>
+                  <label>City *</label>
                   <input
                     type="text"
                     name="city"
                     value={formData.city}
                     onChange={handleInputChange}
-                    className="form-input"
-                    placeholder="City"
                     required
                   />
                 </div>
-
                 <div className="form-group">
-                  <label className="form-label">State *</label>
+                  <label>State *</label>
                   <select
                     name="state"
                     value={formData.state}
                     onChange={handleInputChange}
-                    className="form-select"
                     required
                   >
                     <option value="">Select State</option>
-                    {states.map((state) => (
-                      <option key={state} value={state}>
-                        {state}
-                      </option>
+                    {states.map((s) => (
+                      <option key={s} value={s}>{s}</option>
                     ))}
                   </select>
                 </div>
-
                 <div className="form-group">
-                  <label className="form-label">ZIP Code *</label>
+                  <label>ZIP *</label>
                   <input
                     type="text"
                     name="zip"
                     value={formData.zip}
                     onChange={handleInputChange}
-                    className="form-input"
-                    placeholder="ZIP"
                     required
                   />
                 </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">Required Skills * (Select multiple)</label>
+                <label>Required Skills *</label>
                 <div className="skills-container">
                   {availableSkills.map((skill) => (
-                    <label key={skill} className="skill-checkbox">
+                    <label key={skill}>
                       <input
                         type="checkbox"
                         checked={formData.required_skills.includes(skill)}
                         onChange={() => handleSkillsChange(skill)}
                       />
-                      <span>{skill}</span>
+                      {skill}
                     </label>
                   ))}
                 </div>
               </div>
 
-              <div className="form-row">
-                <div className="form-group">
-                  <label className="form-label">Urgency Level *</label>
-                  <select
-                    name="urgency_level"
-                    value={formData.urgency_level}
-                    onChange={handleInputChange}
-                    className="form-select"
-                    required
-                  >
-                    <option value="">Select Urgency</option>
-                    {urgencyLevels.map((level) => (
-                      <option key={level} value={level}>
-                        {level.charAt(0).toUpperCase() + level.slice(1)}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+              <div className="form-group">
+                <label>Urgency Level *</label>
+                <select
+                  name="urgency_level"
+                  value={formData.urgency_level}
+                  onChange={handleInputChange}
+                  required
+                >
+                  <option value="">Select urgency</option>
+                  {urgencyLevels.map((level) => (
+                    <option key={level} value={level}>{level}</option>
+                  ))}
+                </select>
               </div>
 
               <div className="form-row">
                 <div className="form-group">
-                  <label className="form-label">Start Date & Time</label>
+                  <label>Start Date & Time</label>
                   <input
                     type="datetime-local"
                     name="start_datetime"
                     value={formData.start_datetime}
                     onChange={handleInputChange}
-                    className="form-input"
                   />
                 </div>
-
                 <div className="form-group">
-                  <label className="form-label">End Date & Time</label>
+                  <label>End Date & Time</label>
                   <input
                     type="datetime-local"
                     name="end_datetime"
                     value={formData.end_datetime}
                     onChange={handleInputChange}
-                    className="form-input"
                   />
                 </div>
               </div>
@@ -428,41 +339,24 @@ const AdminEventManagement = () => {
           </div>
         )}
 
-        {/* Events List */}
         <div className="events-list">
           <h2>Existing Events</h2>
           {events.length === 0 ? (
-            <p className="no-events">No events found. Create your first event!</p>
+            <p>No events found. Create your first event!</p>
           ) : (
             <div className="events-grid">
-              {events.map((event) => (
-                <div key={event.event_id} className="event-card">
+              {events.map((ev) => (
+                <div key={ev.event_id} className="event-card">
                   <div className="event-header">
-                    <h3>{event.name}</h3>
-                    <span className={`urgency-badge ${event.urgency_level}`}>{event.urgency_level}</span>
+                    <h3>{ev.name}</h3>
+                    <span className={`urgency-badge ${ev.urgency_level}`}>{ev.urgency_level}</span>
                   </div>
-                  <p className="event-description">{event.description}</p>
-                  <div className="event-details">
-                    <p>
-                      <strong>Location:</strong> {event.City}, {event.State} {event.zip}
-                    </p>
-                    <p>
-                      <strong>Skills:</strong>{" "}
-                      {Array.isArray(event.required_skills) ? event.required_skills.join(", ") : "None specified"}
-                    </p>
-                    {event.start_datetime && (
-                      <p>
-                        <strong>Start:</strong> {new Date(event.start_datetime).toLocaleString()}
-                      </p>
-                    )}
-                  </div>
+                  <p>{ev.description}</p>
+                  <p><strong>Location:</strong> {ev.City}, {ev.State} {ev.zip}</p>
+                  <p><strong>Skills:</strong> {ev.required_skills.join(", ")}</p>
                   <div className="event-actions">
-                    <button onClick={() => handleEdit(event)} className="btn-edit">
-                      Edit
-                    </button>
-                    <button onClick={() => handleDelete(event.event_id)} className="btn-delete">
-                      Delete
-                    </button>
+                    <button onClick={() => handleEdit(ev)} className="btn-edit">Edit</button>
+                    <button onClick={() => handleDelete(ev.event_id)} className="btn-delete">Delete</button>
                   </div>
                 </div>
               ))}
@@ -471,7 +365,7 @@ const AdminEventManagement = () => {
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default AdminEventManagement
+export default AdminEventManagement;
