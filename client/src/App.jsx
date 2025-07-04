@@ -11,6 +11,7 @@ import RegisterPage from './pages/RegisterPage';
 import Navbar from './components/Navbar';
 import AdminEventManagement from './pages/AdminEventManagement';
 import Admin from './pages/AdminPage';
+import AdminLogin from './pages/AdminLogin';
 import AdminVolunteerMatching from './pages/AdminVolunteerMatching';
 
 
@@ -30,6 +31,7 @@ function App() {
         <Route path="/events" element={<AdminEventManagement />} />
         <Route path="/adminvolunteermatching" element = {<AdminVolunteerMatching/>} />
         <Route path="/admin" element={<Admin/>}/>
+        <Route path="/admin-login" element={<AdminLogin />} />
 
       </Routes>
     </Router>

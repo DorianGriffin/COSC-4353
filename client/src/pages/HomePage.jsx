@@ -63,10 +63,8 @@ const HomePage = () => {
       <nav className="navbar">
         <div className="logo">VolunteerApp</div>
         <div className="nav-links">
-          <button className="nav-button" onClick={() => navigate('/about')}>About</button>
-          <button className="nav-button" onClick={() => navigate('/opportunities')}>Opportunities</button>
           <button className="nav-button" onClick={() => navigate('/login')}>Login</button>
-          <button className="nav-button" onClick={() => navigate ('/admin')}>Admin</button>
+          <button className="nav-button" onClick={() => navigate('/admin-login')}>Admin</button>
           <button className="nav-button primary" onClick={() => navigate('/login')}>Get Started</button>
         </div>
       </nav>
@@ -201,10 +199,6 @@ const HomePage = () => {
           <div className="cta-content">
             <h2>Ready to Make a Difference?</h2>
             <p>Join thousands of volunteers who are already making an impact in their communities</p>
-            <button className="cta-button large" onClick={() => navigate('/login')}>
-              Get Started Today
-              <span className="button-icon">🚀</span>
-            </button>
           </div>
         </div>
       </section>

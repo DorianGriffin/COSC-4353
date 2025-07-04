@@ -179,9 +179,7 @@ const AdminEventManagement = () => {
           <button className="nav-btn" onClick={() => navigate("/adminvolunteermatching")}>
             Volunteer Matching
           </button>
-          <button className="nav-btn" onClick={() => navigate("/dashboard")}>
-            Back to Dashboard
-          </button>
+          <button className="nav-btn" onClick={() => navigate("/")}>Back to Home</button>
         </div>
       </nav>
 
