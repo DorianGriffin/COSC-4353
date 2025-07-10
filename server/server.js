@@ -4,7 +4,7 @@ const cors = require("cors")
 const app = express()
 
 
-const notificationsRouter = require("./routes/notificationsroutes")
+const notificationsRouter = require("./routes/notificationsRoutes")
 const volunteerHistoryRouter = require('./routes/volunteerHistory');
 
 // Simple CORS
