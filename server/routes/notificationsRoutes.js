@@ -1,5 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const notificationsController = require('../controllers/notificationsController');
+
+router.get('/:userId', notificationsController.getNotificationsForUser);
+
+module.exports = router;
+
+
+
+
+/*
+
+DATABASE
+
+const express = require('express');
+const router = express.Router();
 const db = require('../models/db');
 
 // Get notifications for a specific user
@@ -24,3 +39,5 @@ router.get('/:userId', (req, res) => {
 });
 
 module.exports = router;
+
+*/
