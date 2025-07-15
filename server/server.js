@@ -3,7 +3,7 @@ const cors = require("cors")
 
 const app = express()
 
-
+const profileRoutes = require('./routes/profileRoutes')
 const notificationsRouter = require("./routes/notificationsRoutes")
 const volunteerHistoryRouter = require('./routes/volunteerHistory');
 
@@ -16,6 +16,7 @@ app.use(
   })
 )
 app.use(express.json())
+app.use('/api/users', profileRoutes)
 app.use("/api/notifications", notificationsRouter)
 app.use('/api/volunteer-history', volunteerHistoryRouter);
 
