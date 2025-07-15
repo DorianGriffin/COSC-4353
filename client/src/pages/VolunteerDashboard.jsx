@@ -9,7 +9,7 @@ const VolunteerDashboard = () => {
   const dropdownRef = useRef(null);
 
   const [user, setUser] = useState({
-    name: 'Cristiano',
+    name: '',
     skills: [],
     availability: []
   });
@@ -22,15 +22,42 @@ const VolunteerDashboard = () => {
   ]);
 
   useEffect(() => {
-    const name = localStorage.getItem('userName');
-    const skills = JSON.parse(localStorage.getItem('skills')) || [];
-    const availability = JSON.parse(localStorage.getItem('availability')) || [];
-    const isComplete = localStorage.getItem('profileComplete') === 'true';
+    //old, no backend
+    //const name = localStorage.getItem('userName');
+    //const skills = JSON.parse(localStorage.getItem('skills')) || [];
+    //const availability = JSON.parse(localStorage.getItem('availability')) || [];
+    //const isComplete = localStorage.getItem('profileComplete') === 'true';
 
-    if (name) {
-      setUser({ name, skills, availability });
+    //if (name) {
+     // setUser({ name, skills, availability });
+    //}
+   // setProfileComplete(isComplete);
+    //Fetch real profile data from backend
+     const localUser = JSON.parse(localStorage.getItem("user"));
+    if (!localUser || !localUser.username) {
+      console.error("User not found in localStorage.");
+      return;
     }
-    setProfileComplete(isComplete);
+
+    fetch(`http://localhost:8080/api/users/profile/${localUser.username}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          setUser({
+            name: data.data.name,
+            skills: data.data.skills || [],
+            availability: data.data.availability || []
+          });          
+          setProfileComplete(true);
+        } else {
+          console.warn("Profile not found or incomplete");
+          setProfileComplete(false);
+        }
+      })
+      .catch(err => {
+        console.error("Error fetching profile:", err);
+        setProfileComplete(false);
+      });
   }, []);
 
   useEffect(() => {
