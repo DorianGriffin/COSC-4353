@@ -46,11 +46,14 @@ const RegisterPage = () => {
       return
     }
 
-    if (password.length < 6) {
-      setMessage("Password must be at least 6 characters long")
+    const strongPasswordRegex = /^(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    if (!strongPasswordRegex.test(password)) {
+      setMessage("Password must be at least 8 characters, include one uppercase letter and one number")
       setIsLoading(false)
       return
     }
+
 
     try {
       const response = await fetch(`${SERVER_URL}/api/users/register`, {

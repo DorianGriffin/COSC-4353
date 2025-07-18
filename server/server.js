@@ -2,6 +2,7 @@ const express = require("express")
 const cors = require("cors")
 const app = express()
 
+
 const profileRoutes = require('./routes/profileRoutes')
 const notificationsRouter = require("./routes/notificationsRoutes")
 const volunteerHistoryRouter = require('./routes/volunteerHistory');
@@ -14,54 +15,41 @@ app.use(
     credentials: true,
   })
 )
+
+// Parse JSON bodies
 app.use(express.json())
+
 app.use('/api/users', profileRoutes)
 app.use("/api/notifications", notificationsRouter)
 app.use('/api/volunteer-history', volunteerHistoryRouter);
 
-// connect db
-let db = null
-try {
-  db = require("./models/db")
-  console.log("✅ DB loaded")
-} catch (e) {
-  console.error("❌ DB error", e.message)
-}
+// Import routes
+const userRoutes = require("./routes/userRoutes")
+const notificationsRouter = require("./routes/notificationsroutes")
+const volunteerHistoryRouter = require("./routes/volunteerHistory")
+const eventRoutes = require('./routes/eventRoutes');
 
-// test root
+// Use routes
+app.use("/api/users", userRoutes)
+app.use("/api/notifications", notificationsRouter)
+app.use("/api/volunteer-history", volunteerHistoryRouter)
+app.use('/api/events', eventRoutes);
+
+// Test root
 app.get("/", (req, res) => {
   res.json({ message: "Server is running" })
 })
 
-// health check
+// Health check
 app.get("/health", (req, res) => {
   res.json({
     status: "OK",
     time: new Date().toISOString(),
-    db: db ? "connected" : "disconnected"
+    db: "not implemented", // Since you're using hardcoded data
   })
-})
-
-// import all user routes in one place
-const userRoutes = require("./routes/userRoutes")
-app.use("/api/users", userRoutes)
-
-// (OPTIONAL) keep a debug get-users if you want:
-app.get("/api/users", (req, res) => {
-  if (!db) return res.status(500).json({ message: "Database not connected" })
-  db.query(
-    "SELECT user_id, username, email, first_name, last_name, role, created_at FROM users",
-    (err, results) => {
-      if (err) {
-        console.error("User query failed", err)
-        return res.status(500).json({ message: "Database error" })
-      }
-      res.json({ users: results })
-    }
-  )
 })
 
 const PORT = 8080
 app.listen(PORT, () => {
-  console.log(`🚀 Running on http://localhost:${PORT}`)
+  console.log(`🚀 Backend running on http://localhost:${PORT}`)
 })
