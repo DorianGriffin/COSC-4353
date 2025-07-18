@@ -1,9 +1,14 @@
 const express = require("express")
 const cors = require("cors")
-
 const app = express()
 
-// CORS for frontend requests
+
+const profileRoutes = require('./routes/profileRoutes')
+const notificationsRouter = require("./routes/notificationsRoutes")
+const volunteerHistoryRouter = require('./routes/volunteerHistory');
+
+// Simple CORS
+
 app.use(
   cors({
     origin: "http://localhost:3000",
@@ -13,6 +18,10 @@ app.use(
 
 // Parse JSON bodies
 app.use(express.json())
+
+app.use('/api/users', profileRoutes)
+app.use("/api/notifications", notificationsRouter)
+app.use('/api/volunteer-history', volunteerHistoryRouter);
 
 // Import routes
 const userRoutes = require("./routes/userRoutes")

@@ -1,3 +1,44 @@
+exports.getVolunteerHistory = (req, res) => {
+    const userId = parseInt(req.params.userId, 10);
+
+    // validation
+    if (isNaN(userId) || userId <= 0) {
+        return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    // hardcoded volunteer data
+    const hardcodedData = [
+        {
+            event_name: 'Community Clean-Up',
+            description: 'Picking up trash in the park',
+            location: 'Springfield, IL',
+            required_skills: 'Teamwork, Time Management',
+            urgency: 'Medium',
+            event_date: new Date().toISOString(),
+            status: 'completed'
+        },
+        {
+            event_name: 'Food Drive',
+            description: 'Distributing food to those in need',
+            location: 'Chicago, IL',
+            required_skills: 'Organization',
+            urgency: 'High',
+            event_date: new Date().toISOString(),
+            status: 'assigned'
+        }
+    ];
+
+    res.json(hardcodedData);
+};
+
+
+
+
+/*
+
+DATABASE CONNECTED
+
+
 const db = require('../models/db');
 
 exports.getVolunteerHistory = (req, res) => {
@@ -34,3 +75,4 @@ exports.getVolunteerHistory = (req, res) => {
         res.json(results);
     });
 };
+*/
