@@ -7,9 +7,10 @@ const Event = require('../models/Event');
 //returns matched events
 const matchEvents = (req, req) => {
 
-    const requiredSkills = ["firstAidju", "crowdControl"];
-    const requiredDate = "2025-08-01";
-    const requiredZip = "77005";
+    //example 
+    const requiredSkills = ["", ""];
+    const requiredDate = "2025-07-01";
+    const requiredZip = "00000";
 
     const matches = Volunteer.find({
       skills: { $all: requiredSkills },
@@ -26,8 +27,7 @@ const matchEvents = (req, req) => {
 exports.assignVolunteers = async (req, res, next) => {
     const eventId = req.params.eventId;
     // Static example IDs
-    const volunteerIds = ["64a1f2b3c4d5e6f7a8b9c0d1", "64a1f2b3c4d5e6f7a8b9c0d2"];
-
+    const volunteerIds = ["64a1f2b3c4d5e6f7a8b9c0d2"];
     const event =  Event.findById(eventId);
     if (!event) return res.status(404).json({ message: 'Event not found' });
 
