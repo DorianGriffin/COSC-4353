@@ -7,7 +7,7 @@ const NotificationsPage = () => {
     const [hoveredRowId, setHoveredRowId] = useState(null);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    const userId = storedUser?.user_id;
+    const userId = storedUser?.id;
 
     // Set the page background color on mount and clean it on unmount
     useEffect(() => {

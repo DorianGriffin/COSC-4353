@@ -101,7 +101,7 @@ const VolunteerDashboard = () => {
           }}><p><strong>Availability:</strong></p><ul style={{ marginLeft: '1rem', marginBottom: '0.5rem' }}>
               {user.availability.length > 0 ? (user.availability.map((date, idx) => <li key={idx}>{date}</li>)) : (
               <li>No availability set</li>)}</ul><hr />
-            <p onClick={() => handleNavigate('/notification')} style={{ cursor: 'pointer', color: '#dc3545', margin: '0.3rem 0' }}> Notification</p>
+            <p onClick={() => handleNavigate('/notifications')} style={{ cursor: 'pointer', color: '#dc3545', margin: '0.3rem 0' }}> Notification</p>
             <p onClick={() => handleNavigate('/profile')} style={{ cursor: 'pointer', color: '#dc3545', margin: '0.3rem 0' }}>Profile</p>
             <p onClick={() => handleNavigate('/volunteer-history')} style={{ cursor: 'pointer', color: '#dc3545', margin: '0.3rem 0' }}>History</p>
           </div>
