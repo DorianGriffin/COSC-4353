@@ -1,48 +1,51 @@
-//define functions
-/**
- *  List of events and user gets matched to one based on their criteria
- */
-const Volunteer = require('../models/Volunteer');
-const Event = require('../models/Event');
-//returns matched events
-const matchEvents = (req, req) => {
+exports.ismatched = (req, req) =>
+{
+const volunteers = [
+    {
+      _id: 'v1',
+      name: 'Dorian',
+      skills: ['cooking', 'first aid'],
+      availability: ['Monday', 'Wednesday'],
+      location: 'Houston'
+    }
+];
+const events = [
+    {
+      _id: 'e1',
+      title: 'Community Kitchen',
+      requiredSkills: ['cooking'],
+      date: 'Monday',
+      location: 'Houston'
+    },
+];
+const volunteer = volunteers.find(v => v._id === volunteerId);
 
-    //example 
-    const requiredSkills = ["", ""];
-    const requiredDate = "2025-07-01";
-    const requiredZip = "00000";
+if (!volunteer) {
+    return res.status(404).json({ error: 'Volunteer not found' });
+  }
 
-    const matches = Volunteer.find({
-      skills: { $all: requiredSkills },
-      availability: requiredDate,
-      "location.zip": requiredZip
-    });
-
-     return res.json({
-      eventId,
-      criteria: { requiredSkills, requiredDate, requiredZip },
-      matches
-    });
-}
-exports.assignVolunteers = async (req, res, next) => {
-    const eventId = req.params.eventId;
-    // Static example IDs
-    const volunteerIds = ["64a1f2b3c4d5e6f7a8b9c0d2"];
-    const event =  Event.findById(eventId);
-    if (!event) return res.status(404).json({ message: 'Event not found' });
-
-    event.volunteers = volunteerIds;
-    event.save();
-
-    await Volunteer.updateMany(
-      { _id: { $in: volunteerIds } },
-      { $push: { events: event._id } }
+const matchedEvents = events.filter(event => {
+    const skillMatch = event.requiredSkills.every(skill =>
+        volunteer.skills.includes(skill)
     );
+    const availabilityMatch = volunteer.availability.includes(event.date);  
+    const locationMatch = event.location === volunteer.location;
+    return skillMatch && availabilityMatch && locationMatch;
+});
 
-    res.json({
-      message: 'volunteers assigned',
-      eventId,
-      assignedVolunteerIds: volunteerIds
-    });
- 
+
+res.status(200).json({
+    volunteer: {
+      id: volunteer._id,
+      name: volunteer.name
+    },
+    matchedEvents: matchedEvents.map(event => ({
+      id: event._id,
+      title: event.title,
+      date: event.date,
+      location: event.location
+    }))
+  });
+
+
 };

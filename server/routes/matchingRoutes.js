@@ -1,8 +1,7 @@
 const express = require('express')
 const router = express.Router
-//Controller functions
 const { ismatched } = require('../controllers/matchingController');
 
-router.get('/', matchedEvents); // is the meeting matched
+router.get('/match/volunteerID', ismatched);
 
 module.exports = router;
