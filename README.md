@@ -16,7 +16,7 @@ npm install
 npm test
 ```
 
-## istanbul/chutzpah tests -- inr oot
+## istanbul/chutzpah tests -- in root
 to run unit tests using istanbul/chutzpah, ensure the following dependencies have been added through powershell
 
 ```bash
