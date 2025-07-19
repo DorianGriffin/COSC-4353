@@ -1,16 +1,17 @@
 # Volunteer Matching App 
 
-# Frontend Setup
+### Backend:
+- Node.js + Express
+- Jest + Supertest 
+- Mocha + Chai
+- No database for now – backend uses hardcoded data only
 
-- React
-- React Router DOM
-- Axios (planned for API calls)
-- Node.js + Express (backend – WIP)
-- MySQL (database – separate setup)
+## Install Dependencies
+```bash
+npm install
+```
 
-## 🚀 Getting Started
-
-### 1. Clone the Repo
-### 2. Install dependencies
-- npm install
-- npm start
+## Jest tests -- in root
+```bash
+npm test
+```
