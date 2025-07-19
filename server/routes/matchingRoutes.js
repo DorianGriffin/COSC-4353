@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router
-const { ismatched } = require('../controllers/matchingController');
+const matchingController = require('../controllers/matchingController');
 
-router.get('/match/volunteerID', ismatched);
+router.get('/match/volunteerID', matchingController.ismatched);
 
 module.exports = router;
