@@ -2,6 +2,8 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import Login from './pages/LoginPage';
+import ForgotPasswordPage from './pages/ForgotPassword';
+import ResetPassword from "./pages/ResetPassword"
 import VolunteerHistoryPage from './pages/VolunteerHistoryPage';
 import VolunteerDashboard from './pages/VolunteerDashboard';
 import NotificationsPage from './pages/NotificationsPage';
@@ -22,6 +24,8 @@ function App() {
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/volunteer-dashboard" element={<VolunteerDashboard />} />
         <Route path="/notifications" element={<NotificationsPage />} />
         <Route path="/volunteer-history" element={<VolunteerHistoryPage />} />

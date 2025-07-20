@@ -9,7 +9,9 @@ const Navbar = () => {
     if (
         location.pathname === "/" ||
         location.pathname === "/login" ||
-        location.pathname === "/register"
+        location.pathname === "/register" ||
+        location.pathname === "/forgot-password"||
+        location.pathname.startsWith("/reset-password")
     ) {
         return null;
     }

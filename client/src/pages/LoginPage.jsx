@@ -79,13 +79,13 @@ const LoginPage = () => {
           <button className="back-home-button" onClick={() => navigate("/")}>
             ← Back to Home
           </button>
-
+  
           <div className="auth-header">
             <div className="logo">VolunteerApp</div>
             <h1 className="auth-title">Welcome Back</h1>
             <p className="auth-subtitle">Sign in to continue making an impact</p>
           </div>
-
+  
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <label htmlFor="username" className="form-label">
@@ -102,7 +102,7 @@ const LoginPage = () => {
                 required
               />
             </div>
-
+  
             <div className="form-group">
               <label htmlFor="password" className="form-label">
                 Password
@@ -118,11 +118,19 @@ const LoginPage = () => {
                 required
               />
             </div>
-
+  
+            <div className="forgot-password-link">
+              <button type="button" onClick={() => navigate("/forgot-password")} className="switch-button">
+                Forgot Password?
+              </button>
+            </div>
+  
             {message && (
-              <div className={`message ${message.includes("successful") ? "success" : "error"}`}>{message}</div>
+              <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
+                {message}
+              </div>
             )}
-
+  
             <button type="submit" disabled={isLoading} className="auth-button">
               {isLoading ? (
                 <span className="loading-spinner">
@@ -134,7 +142,7 @@ const LoginPage = () => {
               )}
             </button>
           </form>
-
+  
           <div className="auth-switch">
             <p>
               Don't have an account?{" "}
@@ -143,13 +151,8 @@ const LoginPage = () => {
               </button>
             </p>
           </div>
-
-          <div className="demo-info">
-            <p className="demo-title">Demo Credentials:</p>
-            <p className="demo-text">Username: erin1 | Password: hashedpassword123</p>
-          </div>
-        </div>
-
+        </div> {/* ← This closes the auth-card properly */}
+  
         <div className="auth-side-panel">
           <div className="side-content">
             <h2>Welcome Back!</h2>
@@ -179,9 +182,10 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
+  
       </div>
     </div>
-  )
+  )  
 }
 
 export default LoginPage

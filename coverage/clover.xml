@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<coverage generated="1752886673883" clover="3.2.0">
-  <project timestamp="1752886673883" name="All files">
+<coverage generated="1753030596164" clover="3.2.0">
+  <project timestamp="1753030596164" name="All files">
     <metrics statements="113" coveredstatements="109" conditionals="87" coveredconditionals="81" methods="23" coveredmethods="23" elements="223" coveredelements="213" complexity="0" loc="113" ncloc="113" packages="1" files="5" classes="5"/>
     <file name="adminLoginController.js" path="/Users/erinsebastian/Desktop/COSC-4353/server/controllers/adminLoginController.js">
       <metrics statements="9" coveredstatements="9" conditionals="8" coveredconditionals="8" methods="1" coveredmethods="1"/>
