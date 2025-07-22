@@ -33,21 +33,7 @@ const Navbar = () => {
                 fontWeight: "600",
             }}
         >
-            <div>
-                <Link
-                    to="/notifications"
-                    style={{ color: "white", marginRight: "1rem", textDecoration: "none" }}
-                >
-                    Notifications
-                </Link>
-                <Link
-                    to="/volunteer-history"
-                    style={{ color: "white", marginRight: "1rem", textDecoration: "none" }}
-                >
-                    History
-                </Link>
- 
-            </div>
+
 
             <div>
                 {user ? (
