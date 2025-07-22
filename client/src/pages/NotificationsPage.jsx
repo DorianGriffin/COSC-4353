@@ -7,7 +7,7 @@ const NotificationsPage = () => {
     const [hoveredRowId, setHoveredRowId] = useState(null);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    const userId = storedUser?.id;
+    const userId = storedUser?.user_id;
 
     // Set the page background color on mount and clean it on unmount
     useEffect(() => {
@@ -113,6 +113,21 @@ const NotificationsPage = () => {
         ...(isHovered && { backgroundColor: colors.hoverPurple, color: colors.white }),
     });
 
+    const handleMarkAsRead = async (notificationId) => {
+        try {
+            await axios.patch(`http://localhost:8080/api/notifications/${notificationId}/read`);
+            setNotifications(prev =>
+                prev.map(n =>
+                    n.notification_id === notificationId
+                        ? { ...n, read_status: 1 }
+                        : n
+                )
+            );
+        } catch (err) {
+            console.error('Failed to mark as read:', err);
+        }
+    };
+
     return (
         <div style={containerStyle}>
             <h2 style={headingStyle}>Notifications</h2>
@@ -143,7 +158,26 @@ const NotificationsPage = () => {
                                     onMouseEnter={() => setHoveredRowId(n.notification_id)}
                                     onMouseLeave={() => setHoveredRowId(null)}
                                 >
-                                    <td style={{ ...thTdStyle, ...messageCellStyle }}>{n.message}</td>
+                                    <td style={{ ...thTdStyle, ...messageCellStyle }}>
+                                        {n.message}
+                                        {!n.read_status && (
+                                            <button
+                                                onClick={() => handleMarkAsRead(n.notification_id)}
+                                                style={{
+                                                    marginLeft: '12px',
+                                                    padding: '4px 8px',
+                                                    fontSize: '0.75rem',
+                                                    backgroundColor: colors.mediumPurple,
+                                                    color: 'white',
+                                                    border: 'none',
+                                                    borderRadius: '6px',
+                                                    cursor: 'pointer',
+                                                }}
+                                            >
+                                                Mark as Read
+                                            </button>
+                                        )}
+                                    </td>
                                     <td style={{ ...thTdStyle, ...dateTimeCellStyle }}>{dateString}</td>
                                     <td style={{ ...thTdStyle, ...dateTimeCellStyle }}>{timeString}</td>
                                 </tr>
