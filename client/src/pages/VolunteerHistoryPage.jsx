@@ -6,7 +6,7 @@ const VolunteerHistoryPage = () => {
     const [loading, setLoading] = useState(true);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    const userId = storedUser?.id;
+    const userId = storedUser?.user_id;
 
     // Set periwinkle page background on mount, reset on unmount
     useEffect(() => {
