@@ -1,43 +1,48 @@
-// controllers/notificationsController.js
-exports.getNotificationsForUser = (req, res) => {
+const db = require('../models/db');
+
+const getUserNotifications = async (req, res) => {
+    const userId = req.params.userId;
+
     try {
-        const userId = parseInt(req.params.userId, 10);
-        if (isNaN(userId)) {
-            return res.status(400).json({ error: 'Invalid user ID' });
-        }
-
-        console.log("Serving mock notifications for userId:", userId);
-
-        const mockNotifications = [
-            {
-                notification_id: 101,
-                message: "Your event has been approved!",
-                created_at: new Date("2025-01-01T10:30:00Z"),
-                read_status: false,
-            },
-            {
-                notification_id: 102,
-                message: "Reminder: Upcoming volunteer shift tomorrow.",
-                created_at: new Date("2025-01-02T14:45:00Z"),
-                read_status: true,
-            },
-            {
-                notification_id: 103,
-                message: "New skills added to your profile.",
-                created_at: new Date("2025-01-03T09:15:00Z"),
-                read_status: false,
-            },
-        ];
-
-
-        res.json(mockNotifications);
-
-    } catch (error) {
-        console.error(" ERROR in getNotificationsForUser:", error);
-        res.status(500).json({ error: 'Internal Server Error' });
+        const [rows] = await db.query(
+            `SELECT notification_id, message, created_at, read_status
+             FROM Notifications
+             WHERE user_id = ?
+             ORDER BY created_at DESC`,
+            [userId]
+        );
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error("Error fetching notifications:", err);
+        res.status(500).json({ error: "Failed to fetch notifications" });
     }
 };
 
+const markAsRead = async (req, res) => {
+    const notificationId = req.params.id;
+
+    try {
+        const [result] = await db.query(
+            `UPDATE Notifications SET read_status = 1 WHERE notification_id = ?`,
+            [notificationId]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ error: "Notification not found" });
+        }
+
+        res.status(200).json({ message: "Notification marked as read" });
+    } catch (err) {
+        console.error("Error marking notification as read:", err);
+        res.status(500).json({ error: "Failed to update notification" });
+    }
+};
+
+
+module.exports = {
+    getUserNotifications,
+    markAsRead,
+};
 
 
 
