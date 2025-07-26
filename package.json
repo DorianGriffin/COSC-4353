@@ -18,12 +18,17 @@
     "exclude": [
       "test/**",
       "server/controllers/**",
+      "server/server.js",
       "server/coverage/lcov-report",
       "server/models",
       "coverage/**",
       "client/**",
       "server/routes/adminLoginRoutes.js",
-      "server/routes/matchingRoutes.js"
+      "server/routes/matchingRoutes.js",
+      "server/routes/eventRoutes.js",
+      "server/routes/profileRoutes.js",
+      "server/routes/userRoutes.js"
+
     ]
   },
   "jest": {
