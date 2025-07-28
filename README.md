@@ -1,15 +1,22 @@
 # Volunteer Matching App 
 
-# Frontend Setup
+### Backend:
+- Node.js + Express
+- Jest + Supertest 
+- Mocha + Chai
+- No database for now – backend uses hardcoded data only
 
-- React
-- React Router DOM
-- Axios (planned for API calls)
-- Node.js + Express (backend – WIP)
-- MySQL (database – separate setup)
+## Install Dependencies
+```bash
+npm install
+```
 
-## 🚀 Getting Started
+## Jest tests -- in root
+```bash
+npm test
+```
 
+<<<<<<< HEAD
 ### 1. Clone the Repo
 ### 2. Install dependencies
 - npm install
@@ -25,6 +32,8 @@ npm install
 npm test
 ```
 
+=======
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
 ## istanbul/chutzpah tests -- in root
 to run unit tests using istanbul/chutzpah, ensure the following dependencies have been added through powershell
 
