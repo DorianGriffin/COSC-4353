@@ -1,0 +1,64 @@
+{
+  "name": "cosc-4353",
+  "version": "1.0.0",
+  "description": "# Frontend Setup",
+  "main": "index.js",
+  "scripts": {
+    "start": "react-scripts start",
+    "test": "jest --coverage",
+    "test:mocha": "mocha \"test/**/*.test.js\" --exclude \"test/adminLoginController.test.js\" --exclude \"test/eventController.test.js\" --exclude \"test/profile.test.js\" --exclude \"test/userController.test.js\" --exclude \"test/eventMatching.test.js\" --exit",
+    "coverage:mocha": "npx nyc npm run test:mocha"
+  },
+  "nyc": {
+    "all": true,
+    "reporter": [
+      "text",
+      "html"
+    ],
+    "exclude": [
+      "test/**",
+      "server/controllers/**",
+      "server/coverage/lcov-report",
+      "server/models",
+      "coverage/**",
+      "client/**",
+      "server/routes/adminLoginRoutes.js",
+      "server/routes/matchingRoutes.js"
+
+    ]
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testPathIgnorePatterns": [
+      "/node_modules/",
+      "/test/volunteerHistory.test.js",
+      "/test/notifications.test.js",
+      "/client/src/App.test.js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DorianGriffin/COSC-4353.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DorianGriffin/COSC-4353/issues"
+  },
+  "homepage": "https://github.com/DorianGriffin/COSC-4353#readme",
+  "dependencies": {
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^6.14.2",
+    "react-scripts": "5.0.1"
+  },
+  "devDependencies": {
+    "chai": "^5.2.1",
+    "chai-http": "^5.1.2",
+    "jest": "^27.5.1",
+    "mocha": "^11.7.1",
+    "nyc": "^17.1.0",
+    "supertest": "^7.1.3"
+  }
+}
