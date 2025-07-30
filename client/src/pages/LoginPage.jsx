@@ -1,91 +1,91 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useNavigate } from "react-router-dom"
-import "./Login.css"
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "./AuthContext";
+import "./Login.css";
 
 const LoginPage = () => {
-  const [formData, setFormData] = useState({
-    username: "",
-    password: "",
-  })
-  const [message, setMessage] = useState("")
-  const [isLoading, setIsLoading] = useState(false)
-  const navigate = useNavigate()
+  const [formData, setFormData] = useState({ username: "", password: "" });
+  const [message, setMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const SERVER_URL = "http://localhost:8080"
+  const navigate = useNavigate();
+  const { user, login } = useAuth(); // useAuth hook with login() function
+
+  const SERVER_URL = "http://localhost:8080";
+
+  // ✅ Redirect if already logged in
+  useEffect(() => {
+    if (user) {
+      navigate("/volunteer-dashboard");
+    }
+  }, [user, navigate]);
 
   const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
-    setMessage("")
-  }
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+    setMessage("");
+  };
 
   const handleSubmit = async (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setMessage("")
+    e.preventDefault();
+    setIsLoading(true);
+    setMessage("");
 
-    const { username, password } = formData
+    const { username, password } = formData;
 
     if (!username || !password) {
-      setMessage("Please fill in all fields")
-      setIsLoading(false)
-      return
+      setMessage("Please fill in all fields");
+      setIsLoading(false);
+      return;
     }
 
     try {
       const response = await fetch(`${SERVER_URL}/api/users/login`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username, password }),
-      })
+      });
 
-      const data = await response.json()
+      const data = await response.json();
 
       if (response.ok) {
         localStorage.setItem("user", JSON.stringify(data.user));
+        login(data.user); // ✅ update context
+
         setMessage("Login successful! Redirecting...");
-      
-        const user = data.user;
-      
         setTimeout(() => {
-          if (user.profile_completed === 0) {
+          if (data.user.profile_completed === 0) {
             navigate("/profile");
           } else {
             navigate("/volunteer-dashboard");
           }
-        }, 1500);
-      }      
-       else {
-        setMessage(data.message || "Login failed")
+        }, 1000);
+      } else {
+        setMessage(data.message || "Login failed");
       }
     } catch (error) {
-      console.error("Error:", error)
-      setMessage("Server error. Please try again.")
+      console.error("Error:", error);
+      setMessage("Server error. Please try again.");
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
   return (
     <div className="auth-container">
       <div className="auth-background">
         <div className="auth-card">
-          <button className="back-home-button" onClick={() => navigate("/")}>
-            ← Back to Home
+          <button className="back-home-button" onClick={() => navigate(user ? "/volunteer-dashboard" : "/")}>
+            ← Back to {user ? "Dashboard" : "Home"}
           </button>
-  
+
           <div className="auth-header">
             <div className="logo">VolunteerApp</div>
             <h1 className="auth-title">Welcome Back</h1>
             <p className="auth-subtitle">Sign in to continue making an impact</p>
           </div>
-  
+
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <label htmlFor="username" className="form-label">
@@ -102,7 +102,7 @@ const LoginPage = () => {
                 required
               />
             </div>
-  
+
             <div className="form-group">
               <label htmlFor="password" className="form-label">
                 Password
@@ -118,19 +118,27 @@ const LoginPage = () => {
                 required
               />
             </div>
-  
+
             <div className="forgot-password-link">
-              <button type="button" onClick={() => navigate("/forgot-password")} className="switch-button">
+              <button
+                type="button"
+                onClick={() => navigate("/forgot-password")}
+                className="switch-button"
+              >
                 Forgot Password?
               </button>
             </div>
-  
+
             {message && (
-              <div className={`message ${message.includes("successful") ? "success" : "error"}`}>
+              <div
+                className={`message ${
+                  message.includes("successful") ? "success" : "error"
+                }`}
+              >
                 {message}
               </div>
             )}
-  
+
             <button type="submit" disabled={isLoading} className="auth-button">
               {isLoading ? (
                 <span className="loading-spinner">
@@ -142,21 +150,28 @@ const LoginPage = () => {
               )}
             </button>
           </form>
-  
+
           <div className="auth-switch">
             <p>
               Don't have an account?{" "}
-              <button type="button" onClick={() => navigate("/register")} className="switch-button">
+              <button
+                type="button"
+                onClick={() => navigate("/register")}
+                className="switch-button"
+              >
                 Create account
               </button>
             </p>
           </div>
-        </div> {/* ← This closes the auth-card properly */}
-  
+        </div>
+
         <div className="auth-side-panel">
           <div className="side-content">
             <h2>Welcome Back!</h2>
-            <p>Continue your volunteer journey and make a difference in communities worldwide.</p>
+            <p>
+              Continue your volunteer journey and make a difference in
+              communities worldwide.
+            </p>
             <div className="features">
               <div className="feature">
                 <div className="feature-icon">🎯</div>
@@ -182,10 +197,9 @@ const LoginPage = () => {
             </div>
           </div>
         </div>
-  
       </div>
     </div>
-  )  
-}
+  );
+};
 
-export default LoginPage
+export default LoginPage;

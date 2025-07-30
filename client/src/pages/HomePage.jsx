@@ -2,9 +2,14 @@ import React from 'react';
 import './HomePage.css';
 import heroImage from './assets/hero.png';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from './AuthContext';
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  // Debug: Let's see what user looks like
+  console.log('HomePage - user:', user);
 
   const features = [
     {
@@ -59,15 +64,6 @@ const HomePage = () => {
 
   return (
     <div className="home-container">
-      {/* Navigation */}
-      <nav className="navbar">
-        <div className="logo">VolunteerApp</div>
-        <div className="nav-links">
-          <button className="nav-button" onClick={() => navigate('/login')}>Login</button>
-          <button className="nav-button" onClick={() => navigate('/admin-login')}>Admin</button>
-          <button className="nav-button primary" onClick={() => navigate('/login')}>Get Started</button>
-        </div>
-      </nav>
 
       {/* Hero Section */}
       <section className="hero">
@@ -77,13 +73,20 @@ const HomePage = () => {
             <h1>Make an Impact, <span className="highlight">Locally & Globally</span></h1>
             <p>Find volunteer opportunities that match your passion and skills. Connect with organizations making a real difference in communities around the world.</p>
             <div className="hero-buttons">
-              <button className="cta-button primary" onClick={() => navigate('/login')}>
-                Start Volunteering
+              <button className="cta-button primary" onClick={() => navigate(user ? '/volunteer-dashboard' : '/login')}>
+                {user ? 'Go to Dashboard' : 'Start Volunteering'}
                 <span className="button-icon">→</span>
               </button>
+              {user && (
+                <button className="cta-button secondary" onClick={() => navigate('/volunteer-dashboard')}>
+                  View Dashboard
+                </button>
+              )}
+              {!user && (
               <button className="cta-button secondary" onClick={() => navigate('/about')}>
                 Learn More
               </button>
+              )}
             </div>
           </div>
           <div className="hero-image">
