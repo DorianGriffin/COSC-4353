@@ -1,58 +1,22 @@
-exports.ismatched = (req, res) => {
-  const volunteerId = req.params.volunteerId;
+const db = require('../models/db');
 
-  const volunteers = [
-    {
-      _id: 'v1',
-      name: 'Dorian',
-      skills: ['cooking', 'first aid'],
-      availability: ['Monday', 'Wednesday'],
-      location: 'Houston',
-    },
-  ];
-
-  const events = [
-    {
-      _id: 'e1',
-      title: 'Community Kitchen',
-      requiredSkills: ['cooking'],
-      date: 'Monday',
-      location: 'Houston',
-    },
-    {
-      _id: 'e2',
-      title: 'First Aid Training',
-      requiredSkills: ['first aid'],
-      date: 'Wednesday',
-      location: 'Houston',
-    },
-  ];
-
-  const volunteer = volunteers.find((v) => v._id === volunteerId);
-
-  if (!volunteer) {
-    return res.status(404).json({ error: 'Volunteer not found' });
+exports.ismatched = async (req, res) => {
+  const userId = req.params.userId;
+  try {
+      //fecth user information from the database
+      const [rows] = await db.query(
+          `SELECT *  FROM UserProfile, Events
+           WHERE  UserProfile.City = Events.City;`
+          [userId]
+      );
+      res.status(200).json(rows);
+  } catch (error) {
+        console.error("Error fetching data:", err);
+        res.status(500).json({ error: "Failed to fetch data" });
   }
+  //fetch the events from the databas
+};
 
-  const matchedEvents = events.filter((event) => {
-    const skillMatch = event.requiredSkills.every((skill) =>
-      volunteer.skills.includes(skill)
-    );
-    const availabilityMatch = volunteer.availability.includes(event.date);
-    const locationMatch = event.location === volunteer.location;
-    return skillMatch && availabilityMatch && locationMatch;
-  });
-
-  res.status(200).json({
-    volunteer: {
-      id: volunteer._id,
-      name: volunteer.name,
-    },
-    matchedEvents: matchedEvents.map((event) => ({
-      id: event._id,
-      title: event.title,
-      date: event.date,
-      location: event.location,
-    })),
-  });
+module.exports= {
+  ismatched,
 };
