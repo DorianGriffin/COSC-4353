@@ -1,84 +1,104 @@
-"use client"
-/*
-Purpose: Admins view and match volunteers to events
-Elements:
-Auto-generated card UI listing events with brief summary and all volunteers matched to it listed below
-Manual override volunteer option
-Manual add volunteer option
-Send message to all users assigned under events, i.e. each event box will have a ‘message users’ option that the admin can create a custom message for
-Cancel event option, auto sends a message to assigned users
-*/
-import React from 'react'
-import {useState, useEffect } from 'react'
-import './AdminVolunteerMatching.css'
-import { useNavigate } from "react-router-dom"
+'use client';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './AdminVolunteerMatching.css';
 
-const AdminVolunteerMatching  = ({ }) =>  {
-    const SERVER_URL = "http://localhost:8080";
+const AdminVolunteerMatching = () => {
+  const [events, setEvents] = useState([]);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-    const navigate = useNavigate();
 
-    return (
-      
-    <><div className="home-container">
-        {/* Navigation */}
-        <nav className="navbar">
-          <div className="logo">VolunteerApp</div>
-          <div className="nav-links">
-            <button className="nav-button active" onClick={() => navigate('/adminvolunteermatching')}>Volunteer Matching</button>
-            <button className="nav-button" onClick={() => navigate('/login')}>Login</button>
-            <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
-            <button className="nav-button primary" onClick={() => navigate('/login')}>Get Started</button>
+  const localUser = JSON.parse(localStorage.getItem("user"));
+  if (!localUser || !localUser.eventId) { }
+
+  useEffect(() => {
+    fetch(`http://localhost:8080/api/matching/ ${localUser.userId}`)
+      .then(res => {
+        if (!res.ok) throw new Error('Failed to fetch matched events');
+        return res.json();
+      })
+      .then(data => setEvents(data))
+      .catch(err => setError(err.message));
+  }, []);
+
+  const handleCancelEvent = (eventId) => {
+    // Add backend request here if desired
+    alert(`Event ${eventId} canceled. Message sent to volunteers.`);
+  };
+
+  const handleMessageUsers = (eventId) => {
+    // Could open a modal for message input
+    alert(`Custom message to users for event ${eventId}`);
+  };
+
+  const handleAddVolunteer = (eventId) => {
+    alert(`Manual add volunteer to event ${eventId}`);
+  };
+
+  const handleOverrideVolunteer = (eventId) => {
+    alert(`Manual override volunteer for event ${eventId}`);
+  };
+
+  return (
+    <div className="admin-container">
+      <nav className="navbar">
+        <div className="logo">VolunteerApp</div>
+        <div className="nav-links">
+          <button className="nav-button active" onClick={() => navigate('/adminvolunteermatching')}>Volunteer Matching</button>
+          <button className="nav-button" onClick={() => navigate('/login')}>Login</button>
+          <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
+          <button className="nav-button primary" onClick={() => navigate('/login')}>Get Started</button>
+        </div>
+      </nav>
+
+      <div className="content">
+        <h2>Matched Events</h2>
+        {error && <p className="error">{error}</p>}
+        {events.length === 0 && !error && <p>No matched events found.</p>}
+        {events.map(event => (
+          <div key={event.id} style={styles.card}>
+            <h3>{event.name}</h3>
+            <p><strong>Date:</strong> {event.date}</p>
+            <p><strong>Location:</strong> {event.location}</p>
+            <p><strong>Required Skills:</strong> {event.skills?.join(', ')}</p>
+
+            <h4>Matched Volunteers:</h4>
+            <ul>
+              {event.volunteers?.map(v => (
+                <li key={v.id}>
+                  {v.name} ({v.email}) - Skills: {v.skills?.join(', ')}
+                </li>
+              )) || <li>No volunteers matched</li>}
+            </ul>
+
+            <div style={styles.buttonGroup}>
+              <button className="nav-button" onClick={() => handleAddVolunteer(event.id)}>Add Volunteer</button>
+              <button className="nav-button" onClick={() => handleOverrideVolunteer(event.id)}>Override Volunteer</button>
+              <button className="nav-button" onClick={() => handleMessageUsers(event.id)}>Message Users</button>
+              <button className="nav-button" onClick={() => handleCancelEvent(event.id)}>Cancel Event</button>
+            </div>
           </div>
-        </nav>
-      </div>
-    {/*Below is the UI for the Card*/}
-    <div style={styles.card}>
-      <center><h2 style={styles.title}>{"Event Matching"}</h2></center>
-       <br/>
-      <br/>
-      <p style={styles.description}>{"Find Events Here."}</p>
-      {/*List of Events*/}
-      <p>
-          {/*Collect the list of events here*/}
-          <select name="events_list" id="events_list">
-          <option value="Event_1" disabled>Event 1</option>
-          <option value="Event_2">Event 2</option>
-          <option value="Events_3">Event 3</option>
-          <option value="Events_4" selected>Event 4</option>
-</select>
-
-      </p>
-
-      <div style={styles.buttonGroup}>
-        <button className="nav-button" onClick={() => alert('Add volunteer logic here')}>Add Volunteer</button>
-        <button className="nav-button" onClick={() => alert('Override volunteer logic here')}>Override Volunteer</button>
-        <button className="nav-button" onClick={() => alert('Message This User')}>Message Users</button>
-        <button className="nav-button" onClick={() => alert('Button to Cancel Event')}>Cancel Event</button>
+        ))}
       </div>
     </div>
-      </>
-    ); 
-  }
+  );
+};
+
 const styles = {
   card: {
-    border: '1px solid #ddd',
-    borderRadius: 20,
+    border: '1px solid #ccc',
+    borderRadius: 10,
     padding: 20,
     marginBottom: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    margin: 0
-  },
-  description: {
-    color: '#555'
+    backgroundColor: '#f9f9f9',
   },
   buttonGroup: {
     marginTop: 15,
     display: 'flex',
-    gap: 10
+    gap: 10,
+    flexWrap: 'wrap'
   }
 };
 
-export default AdminVolunteerMatching
+export default AdminVolunteerMatching;
