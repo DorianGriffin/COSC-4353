@@ -17,7 +17,7 @@ const AdminVolunteerMatching = () => {
     useEffect(() => {
       const fetchMatches = async () => {
         try {
-          const response = await axios.get("http://localhost:8080/api/matches", { withCredentials: true });
+          const response = await axios.get("http://localhost:8080/api/matches", { credentials: "include"});
           setMatches(response.data);
           getMatch(response.data.length > 0);
         } catch (err) {
