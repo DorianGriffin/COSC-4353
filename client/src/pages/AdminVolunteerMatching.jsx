@@ -7,8 +7,8 @@ import './AdminVolunteerMatching.css';
 const AdminVolunteerMatching = () => {
   const [error, setError] = useState('');
   const navigate = useNavigate();
-  const [matches, setMatches] = useState([]);
-  const [matchFound, getMatch] = useState(false);
+  const [matches, getMatch] = useState([]);
+  const [matchFound, setMatchFound] = useState(false);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId = storedUser?.user_id;
@@ -18,7 +18,7 @@ const AdminVolunteerMatching = () => {
       const fetchMatches = async () => {
         try {
           const response = await axios.get("http://localhost:8080/api/matches", { credentials: "include"});
-          setMatches(response.data);
+          getMatch(response.data);
           getMatch(response.data.length > 0);
         } catch (err) {
           setError('Failed to fetch matches');
