@@ -16,22 +16,19 @@ const AdminVolunteerMatching = () => {
  //fetch matched event
     useEffect(() => {
   const fetchMatches = async () => {
-    if (!userId) return; 
-
-    try {
+    if (!userId) return; try {
       const response = await axios.get(
         `http://localhost:8080/api/matching/match-volunteer/${userId}`,
         { withCredentials: true }
       );
-      getMatch(response.data.matchedEvents); 
-      setMatchFound(response.data.matchedEvents.length > 0);
+        getMatch(response.data.matchedEvents); 
+        setMatchFound(response.data.matchedEvents.length > 0);
     } catch (err) {
       setError('Failed to fetch matches');
       console.error(err);
     }
   };
-  fetchMatches();
-}, [userId]);
+    fetchMatches(); }, [userId]);
   ///
   return (
     <div className="admin-container">
