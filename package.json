@@ -28,7 +28,6 @@
       "server/routes/eventRoutes.js",
       "server/routes/profileRoutes.js",
       "server/routes/userRoutes.js"
-
     ]
   },
   "jest": {
@@ -52,6 +51,7 @@
   },
   "homepage": "https://github.com/DorianGriffin/COSC-4353#readme",
   "dependencies": {
+    "express-session": "^1.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",

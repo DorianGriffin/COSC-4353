@@ -5,6 +5,7 @@ const profileController = require('../controllers/profileController');
 
 router.post('/complete-profile', profileController.completeProfile);
 
-router.get('/profile/:username', profileController.getProfile);
+router.get('/me', profileController.getLoggedInProfile);
+
 
 module.exports = router;

@@ -67,32 +67,12 @@ const loginUser = async (req, res) => {
     if (!match)
       return res.status(401).json({ message: "Invalid credentials" });
 
+    req.session.user = { username: user.username };
+
     const { password_hash, ...userWithoutPassword } = user;
     res.status(200).json({ message: "Login successful", user: userWithoutPassword });
   } catch (error) {
     console.error("Login error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
-
-const completeProfile = async (req, res) => {
-  const { username } = req.body;
-
-  if (!username)
-    return res.status(400).json({ message: "Missing username" });
-
-  try {
-    const [result] = await db.query(
-      "UPDATE users SET profile_completed = 1 WHERE username = ?",
-      [username]
-    );
-
-    if (result.affectedRows === 0)
-      return res.status(404).json({ message: "User not found" });
-
-    res.json({ message: "Profile marked as completed", success: true });
-  } catch (error) {
-    console.error("Complete profile error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -153,11 +133,9 @@ const resetPassword = async (req, res) => {
   }
 }
 
-
 module.exports = {
   registerUser,
   loginUser,
-  completeProfile,
   forgotPassword,
   resetPassword,
 };
