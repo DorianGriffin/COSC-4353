@@ -27,9 +27,17 @@ exports.ismatched = async (req, res) => {
     const [userDates] = await db.query(`
       SELECT available_date FROM UserAvailability WHERE user_id = ?
     `, [userId]);
-    const availableDates = userDates.map(row => row.available_date);
+    const availableDates = userDates.map(row =>
+      new Date(row.available_date).toISOString().split('T')[0]
+    );
+    
 
     if (!availableDates.length) return res.status(404).json({ error: 'No availability found for user' });
+
+    const [acceptedRows] = await db.query(`
+      SELECT event_id FROM VolunteerHistory WHERE user_id = ?
+    `, [userId]);
+    const acceptedEventIds = new Set(acceptedRows.map(row => row.event_id));
 
     // Get all events in same location
     const [events] = await db.query(`
@@ -49,11 +57,15 @@ exports.ismatched = async (req, res) => {
       const hasAllSkills = eventSkillIds.every(skillId => userSkillIds.includes(skillId));
 
       // Compare dates
+      if (!event.start_datetime || isNaN(new Date(event.start_datetime))) continue; 
       const eventDate = new Date(event.start_datetime).toISOString().split('T')[0]; // yyyy-mm-dd
       const isAvailable = availableDates.includes(eventDate);
 
       if (hasAllSkills && isAvailable) {
-        matchedEvents.push(event);
+        matchedEvents.push({
+          ...event,
+          accepted: acceptedEventIds.has(event.event_id) // Add accepted status
+        });
       }
     }
 
@@ -63,30 +75,6 @@ exports.ismatched = async (req, res) => {
 
     res.status(200).json({ matchedEvents });
   } catch (error) {
-    console.error('Error matching volunteer:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-  /*
-  const  userId = req.params.userID;
-  try {
-    const [users] = await db.query('SELECT * FROM users WHERE id = ?', [userId]);
-    if (!users.length) return res.status(404).json({ error: 'User not found' });
-
-    const userLocation = users[0].location;
-
-    const [events] = await db.query(
-      'SELECT * FROM events WHERE location = ?',
-      [userLocation]
-    );
-
-    if (!events.length) {
-      return res.status(404).json({ error: 'No matching events found' });
-    }
-      res.status(200).json(rows);
-  }  catch (err) {
-    res.status(500).json({ error: 'Internal server error' });
-  //fetch the events from the databas
-  }
-};
-*/
