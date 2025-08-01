@@ -10,6 +10,10 @@ const Navbar = () => {
     "/login",
     "/register",
     "/forgot-password",
+    "/admineventmanagement",
+    "/admin-login",
+    "/events",
+    "/admin",
   ];
 
   if (
