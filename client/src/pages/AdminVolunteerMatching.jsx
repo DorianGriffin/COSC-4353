@@ -1,48 +1,31 @@
 'use client';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import './AdminVolunteerMatching.css';
 
 const AdminVolunteerMatching = () => {
-  const [events, setEvents] = useState([]);
   const [error, setError] = useState('');
-  const [showForm, setShowForm] = useState(false);
-  const [matchFound, getMatch] = useState(false);
-  const [profileComplete, setProfileComplete] = useState(false);
   const navigate = useNavigate();
+  const [matches, setMatches] = useState([]);
+  const [matchFound, getMatch] = useState(false);
 
-  // Fetch events from the server
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/", { credentials: "include"});
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const userId = storedUser?.user_id;
+
+ //fetch matched event
+    useEffect(() => {
+      const fetchMatches = async () => {
+        try {
+          const response = await axios.get("http://localhost:8080/api/matches", { withCredentials: true });
+          setMatches(response.data);
+          getMatch(response.data.length > 0);
+        } catch (err) {
+          setError('Failed to fetch matches');
         }
-        const data = await response.json();
-        setEvents(data);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-    fetchEvents();
-  }, []);
-  //fecth profile data
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const response = await fetch("http://localhost:8080/api/profile", { credentials: "include" });
-        if (!response.ok) {
-          throw new Error('Failed to fetch profile');
-        }
-        const data = await response.json();
-        setProfileComplete(data.profileComplete);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
-    fetchProfile();
-  },[]);
+      };
+      fetchMatches();
+    }, []);
   ///
   return (
     <div className="admin-container">
@@ -57,9 +40,29 @@ const AdminVolunteerMatching = () => {
       </nav>
 
       <div className="content">
-        <h2>Profile</h2>
-        <h2>Matched Events</h2>
-
+        <h2>Volunteer Matched Events</h2>
+        <p>Here you can view the events that have been matched with volunteers.</p>
+          <div className = "matching-display-div">
+                  <h3>Volunteer Match</h3>
+                  <p><strong>Volunteer:</strong>Example</p>
+                  <p><strong>Event Name:</strong></p>
+                  <p><strong>Event Date:</strong></p>
+                  <p><strong>Event Description:</strong></p>
+                  <p><strong>Event Location:</strong></p>
+                </div>
+          {error && <p style={{ color: 'red' }}>{error}</p>}
+            {matchFound ? (
+              <form>
+                {matches.map((match, index) => (
+                  <div key={index} style={styles.card}>
+                    <p><strong>Volunteer:</strong> {match.userName}</p>
+                    <p><strong>Event:</strong> {match.eventName}</p>
+                  </div>
+                ))}
+              </form>
+            ) : (
+              <p style={{ color: 'gray' }}>There is no match.</p>
+            )}
       </div>
     </div>
   );
@@ -77,8 +80,8 @@ const styles = {
     marginTop: 15,
     display: 'flex',
     gap: 10,
-    flexWrap: 'wrap'
-  }
+    flexWrap: 'wrap',
+  },
 };
 
 export default AdminVolunteerMatching;
