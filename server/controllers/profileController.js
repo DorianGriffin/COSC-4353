@@ -29,14 +29,14 @@ function validateProfile(data) {
   return null;
 }
 
-//new completeprofile without username
+
 // POST /api/users/complete-profile
 const completeProfile = async (req, res) => {
   const data = req.body;
   const username = req.session?.user?.username;
 
   if (!username) {
-    return res.status(401).json({ success: false, message: "Not logged in." });
+    return res.status(401).json({ success: false, message: "Not logged in. Missing session username." });
   }
 
   const validationError = validateProfile(data);
@@ -160,6 +160,8 @@ module.exports = {
   getProfile,
   getLoggedInProfile,
 };
+
+
 
 /* const db = require("../models/db");
 
