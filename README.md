@@ -16,6 +16,24 @@ npm install
 npm test
 ```
 
+<<<<<<< HEAD
+### 1. Clone the Repo
+### 2. Install dependencies
+- npm install
+- npm start
+
+## Install Dependencies
+```bash
+npm install
+```
+
+## Jest tests -- in root
+```bash
+npm test
+```
+
+=======
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
 ## istanbul/chutzpah tests -- in root
 to run unit tests using istanbul/chutzpah, ensure the following dependencies have been added through powershell
 
