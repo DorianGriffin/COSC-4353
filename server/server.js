@@ -77,7 +77,7 @@ try {
   const volunteerHistoryRouter = require("./routes/volunteerHistory");
   console.log("   ✓ volunteerHistoryRouter loaded successfully");
 
-  console.log("5. Loading matchingRouter...");
+  console.log("6. Loading matchingRouter...");
   const matchingRouter = require("./routes/matchingRoutes");
   console.log("   ✓ matchingRouter loaded successfully");
 
