@@ -77,13 +77,19 @@ try {
   const volunteerHistoryRouter = require("./routes/volunteerHistory");
   console.log("   ✓ volunteerHistoryRouter loaded successfully");
 
+  onsole.log("5. Loading matchingRouter...");
+  const matchingRouter = require("./routes/matching");
+  console.log("   ✓ matchingRouter loaded successfully");
+
+
+
   // Register routes
   app.use("/api/users", userRoutes);
   app.use("/api/profile", profileRoutes);
   app.use("/api/events", eventRoutes);
   app.use("/api/notifications", notificationsRouter);
   app.use("/api/volunteer-history", volunteerHistoryRouter);
-  app.use("/api/matching", matchingRoutes);
+  app.use("/api/matching", matchingRouter);
 
   
   console.log(" All routes registered successfully");
