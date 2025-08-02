@@ -102,9 +102,7 @@ const AdminVolunteerMatching = () => {
     </div>
   );
 };
-<<<<<<< HEAD
-export default AdminVolunteerMatching;
-=======
+
 
 const styles = {
   card: {
