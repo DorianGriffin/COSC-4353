@@ -5,9 +5,30 @@ import axios from 'axios';
 import './AdminVolunteerMatching.css';
 
 const AdminVolunteerMatching = () => {
+
+  const styles = {
+  card: {
+    border: '1px solid #ccc',
+    borderRadius: 10,
+    padding: 20,
+    marginBottom: 20,
+    backgroundColor: '#f9f9f9',
+  },
+  buttonGroup: {
+    marginTop: 15,
+    display: 'flex',
+    gap: 10,
+    flexWrap: 'wrap',
+  },
+}
+
+
+
+
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [matches, getMatch] = useState([]);
+  const [events, setEvents] = useState([]);
   const [matchFound, setMatchFound] = useState(false);
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -30,7 +51,7 @@ const AdminVolunteerMatching = () => {
   };
     fetchMatches(); }, [userId]);
   ///
-  return (
+  return(
     <div className="admin-container">
       <nav className="navbar">
         <div className="logo">VolunteerApp</div>
@@ -50,10 +71,10 @@ const AdminVolunteerMatching = () => {
                   <p><strong>Volunteer:</strong>Example</p>
                   <p><strong>Event Name:</strong></p>
                   <p><strong>Event Date:</strong></p>
-                  <p><strong>Event Description:</strong></p>
+                  <p><strong>Event Description: </strong></p>
                   <p><strong>Event Location:</strong></p>
                 </div>
-          {error && <p style={{ color: 'red' }}>{error}</p>}
+          { error && <p style={{ color: 'red' }}>{error}</p>}
             {matchFound ? (
               <form>
                 {matches.map((match, index) => (
@@ -70,21 +91,4 @@ const AdminVolunteerMatching = () => {
     </div>
   );
 };
-
-const styles = {
-  card: {
-    border: '1px solid #ccc',
-    borderRadius: 10,
-    padding: 20,
-    marginBottom: 20,
-    backgroundColor: '#f9f9f9',
-  },
-  buttonGroup: {
-    marginTop: 15,
-    display: 'flex',
-    gap: 10,
-    flexWrap: 'wrap',
-  },
-};
-
 export default AdminVolunteerMatching;
