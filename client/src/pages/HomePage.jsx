@@ -1,7 +1,6 @@
 import React from 'react';
 import './HomePage.css';
-import Login from './LoginPage';
-import RegisterPage from './RegisterPage';
+
 import heroImage from './assets/hero.png';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthContext';
@@ -66,18 +65,7 @@ const HomePage = () => {
 
   return (
     <div className="home-container">
-      {/* Navigation */}
-      <nav className="navbar">
-        <div className="logo">VolunteerApp</div>
-        <div className="nav-links">
-          <button className="nav-button" onClick={Login}>Login</button>
-          <button className="nav-button primary" onClick ={RegisterPage}>Get Started</button>
-        </div>
-      </nav>
-          <button className="nav-button" onClick={() => navigate('/login')}>Login</button>
-          <button className="nav-button" onClick={() => navigate('/admin-login')}>Admin</button>
-          <button className="nav-button primary" onClick={() => navigate('/login')}>Get Started</button>
-        </div>
+    
 
       {/* Hero Section */}
       <section className="hero">
