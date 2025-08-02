@@ -83,7 +83,9 @@ try {
   app.use("/api/events", eventRoutes);
   app.use("/api/notifications", notificationsRouter);
   app.use("/api/volunteer-history", volunteerHistoryRouter);
+  app.use("/api/matching", matchingRoutes);
 
+  
   console.log(" All routes registered successfully");
 
 } catch (error) {

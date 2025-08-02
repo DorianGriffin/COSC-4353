@@ -4,7 +4,6 @@ import axios from 'axios';
 import './AdminVolunteerMatching.css';
 
 const AdminVolunteerMatching = () => {
-
   const styles = {
   card: {
     border: '1px solid #ccc',
@@ -20,36 +19,30 @@ const AdminVolunteerMatching = () => {
     flexWrap: 'wrap',
   },
 }
-
-
-
-
   const [error, setError] = useState('');
   const navigate = useNavigate();
   const [matches, getMatch] = useState([]);
   const [events, setEvents] = useState([]);
   const [matchFound, setMatchFound] = useState(false);
-
   const storedUser = JSON.parse(localStorage.getItem("user"));
   const userId = storedUser?.user_id;
-
  //fetch matched event
     useEffect(() => {
   const fetchMatches = async () => {
-    if (!userId) return; try {
+    if (!userId) return; 
+    try {
       const response = await axios.get(
-        `http://localhost:8080/api/matching/match-volunteer/${userId}`,
-        { withCredentials: true }
+        `http://localhost:8080/api/matching/match-volunteer/${userId}`, { withCredentials: true }
       );
         getMatch(response.data.matchedEvents); 
         setMatchFound(response.data.matchedEvents.length > 0);
+        console.log("Found Matched Events");
     } catch (err) {
       setError('Failed to fetch matches');
       console.error(err);
     }
   };
     fetchMatches(); }, [userId]);
-
  const handleLogout = () => {
    // Clear any stored admin data
    localStorage.removeItem('admin');
@@ -58,7 +51,6 @@ const AdminVolunteerMatching = () => {
    // Navigate back to home
    navigate('/');
  };
-
   ///
   return(
     <div className="admin-container">
@@ -79,11 +71,11 @@ const AdminVolunteerMatching = () => {
         <p>Here you can view the events that have been matched with volunteers.</p>
           <div className = "matching-display-div">
                   <h3>Volunteer Match</h3>
-                  <p><strong>Volunteer:</strong>Example</p>
-                  <p><strong>Event Name:</strong></p>
-                  <p><strong>Event Date:</strong></p>
+                  <p><strong>Volunteer: </strong></p>
+                  <p><strong>Event Name: </strong></p>
+                  <p><strong>Event Date: </strong></p>
                   <p><strong>Event Description: </strong></p>
-                  <p><strong>Event Location:</strong></p>
+                  <p><strong>Event Location: </strong></p>
                 </div>
           { error && <p style={{ color: 'red' }}>{error}</p>}
             {matchFound ? (
@@ -102,8 +94,6 @@ const AdminVolunteerMatching = () => {
     </div>
   );
 };
-
-
 const styles = {
   card: {
     border: '1px solid #ddd',
@@ -113,5 +103,4 @@ const styles = {
     backgroundColor: '#f9f9f9'
   }
 };
-
 export default AdminVolunteerMatching;
