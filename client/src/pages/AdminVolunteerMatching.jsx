@@ -44,7 +44,7 @@ const AdminVolunteerMatching = () => {
       <nav className="admin-navbar">
         <div className="admin-logo">VolunteerApp Admin</div>
         <div className="admin-nav-links">
-          <button className="nav-btn" onClick={() => navigate("/admineventmanagement")}>
+          <button className="nav-btn" onClick={() => navigate("/events")}>
             Manage Events
           </button>
           <button className="nav-btn active">Volunteer Matching</button>
