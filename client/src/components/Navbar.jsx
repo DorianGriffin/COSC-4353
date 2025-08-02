@@ -49,6 +49,16 @@ const Navbar = () => {
     };
   }, []);
 
+    const [hydratedUser, setHydratedUser] = useState(() => {
+        const stored = localStorage.getItem("user");
+        return stored ? JSON.parse(stored) : null;
+    });
+
+    useEffect(() => {
+        const stored = localStorage.getItem("user");
+        setHydratedUser(stored ? JSON.parse(stored) : null);
+    }, [location.pathname]);
+
   const hideNavbarRoutes = [
     "/login",
     "/register",
@@ -136,12 +146,11 @@ const Navbar = () => {
               Logout
             </button>
           </>
-        ) : user ? (
+        ) : user || hydratedUser ? (
           // Regular user is logged in
           <>
             <span style={{ marginRight: "1rem" }}>
-              Welcome, {user.first_name || user.username}
-            </span>
+                              Welcome, {(user || hydratedUser)?.first_name || (user || hydratedUser)?.username}            </span>
             <button
               onClick={() => navigate("/volunteer-dashboard")}
               style={{
@@ -211,6 +220,13 @@ const Navbar = () => {
       </div>
     </nav>
   );
+};
+
+const navButtonStyle = {
+    backgroundColor: "transparent",
+    border: "none",
+    color: "white",
+    cursor: "pointer",
 };
 
 export default Navbar;
