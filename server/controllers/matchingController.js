@@ -1,58 +1,80 @@
-exports.ismatched = (req, res) => {
-  const volunteerId = req.params.volunteerId;
+const db = require('../models/db');
 
-  const volunteers = [
-    {
-      _id: 'v1',
-      name: 'Dorian',
-      skills: ['cooking', 'first aid'],
-      availability: ['Monday', 'Wednesday'],
-      location: 'Houston',
-    },
-  ];
+exports.ismatched = async (req, res) => {
+   const userId = req.params.userId;
 
-  const events = [
-    {
-      _id: 'e1',
-      title: 'Community Kitchen',
-      requiredSkills: ['cooking'],
-      date: 'Monday',
-      location: 'Houston',
-    },
-    {
-      _id: 'e2',
-      title: 'First Aid Training',
-      requiredSkills: ['first aid'],
-      date: 'Wednesday',
-      location: 'Houston',
-    },
-  ];
+  try {
+    // Get user profile (for location)
+    const [profiles] = await db.query(`
+      SELECT City, State
+      FROM UserProfiles
+      WHERE user_id = ?
+    `, [userId]);
 
-  const volunteer = volunteers.find((v) => v._id === volunteerId);
+    if (!profiles.length) return res.status(404).json({ error: 'User profile not found' });
 
-  if (!volunteer) {
-    return res.status(404).json({ error: 'Volunteer not found' });
-  }
+    const { City, State } = profiles[0];
 
-  const matchedEvents = events.filter((event) => {
-    const skillMatch = event.requiredSkills.every((skill) =>
-      volunteer.skills.includes(skill)
+    // Get user skills
+    const [userSkillsRows] = await db.query(`
+      SELECT skill_id FROM UserSkills WHERE user_id = ?
+    `, [userId]);
+    const userSkillIds = userSkillsRows.map(row => row.skill_id);
+
+    if (!userSkillIds.length) return res.status(404).json({ error: 'No skills found for user' });
+
+    // Get user availability
+    const [userDates] = await db.query(`
+      SELECT available_date FROM UserAvailability WHERE user_id = ?
+    `, [userId]);
+    const availableDates = userDates.map(row =>
+      new Date(row.available_date).toISOString().split('T')[0]
     );
-    const availabilityMatch = volunteer.availability.includes(event.date);
-    const locationMatch = event.location === volunteer.location;
-    return skillMatch && availabilityMatch && locationMatch;
-  });
+    
 
-  res.status(200).json({
-    volunteer: {
-      id: volunteer._id,
-      name: volunteer.name,
-    },
-    matchedEvents: matchedEvents.map((event) => ({
-      id: event._id,
-      title: event.title,
-      date: event.date,
-      location: event.location,
-    })),
-  });
+    if (!availableDates.length) return res.status(404).json({ error: 'No availability found for user' });
+
+    const [acceptedRows] = await db.query(`
+      SELECT event_id FROM VolunteerHistory WHERE user_id = ?
+    `, [userId]);
+    const acceptedEventIds = new Set(acceptedRows.map(row => row.event_id));
+
+    // Get all events in same location
+    const [events] = await db.query(`
+      SELECT * FROM Events WHERE City = ? AND State = ?
+    `, [City, State]);
+
+    // Filter events by skill and availability
+    const matchedEvents = [];
+
+    for (const event of events) {
+      // Get required skills for this event
+      const [eventSkillsRows] = await db.query(`
+        SELECT skill_id FROM EventSkills WHERE event_id = ?
+      `, [event.event_id]);
+      const eventSkillIds = eventSkillsRows.map(row => row.skill_id);
+
+      const hasAllSkills = eventSkillIds.every(skillId => userSkillIds.includes(skillId));
+
+      // Compare dates
+      if (!event.start_datetime || isNaN(new Date(event.start_datetime))) continue; 
+      const eventDate = new Date(event.start_datetime).toISOString().split('T')[0]; // yyyy-mm-dd
+      const isAvailable = availableDates.includes(eventDate);
+
+      if (hasAllSkills && isAvailable) {
+        matchedEvents.push({
+          ...event,
+          accepted: acceptedEventIds.has(event.event_id) // Add accepted status
+        });
+      }
+    }
+
+    if (!matchedEvents.length) {
+      return res.status(404).json({ error: 'No matching events found' });
+    }
+
+    res.status(200).json({ matchedEvents });
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
 };

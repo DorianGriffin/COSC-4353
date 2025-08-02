@@ -1,12 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const VolunteerHistoryPage = () => {
     const [assignments, setAssignments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [hoveredRowIdx, setHoveredRowIdx] = useState(null);
 
     const storedUser = JSON.parse(localStorage.getItem("user"));
-    const userId = storedUser?.id;
+    const userId = storedUser?.user_id;
+
+
+    const navigate = useNavigate(); 
+
+    const handleGoToDashboard = () => {
+        navigate('/volunteer-dashboard');
+    };
 
     // Set periwinkle page background on mount, reset on unmount
     useEffect(() => {
@@ -102,10 +111,28 @@ const VolunteerHistoryPage = () => {
     };
 
     // Row hover handling (optional)
-    const [hoveredRowIdx, setHoveredRowIdx] = useState(null);
+    //const [hoveredRowIdx, setHoveredRowIdx] = useState(null);
 
     return (
         <div style={containerStyle}>
+            {userId && (
+                <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+                    <button
+                        onClick={handleGoToDashboard}
+                        style={{
+                            padding: '8px 16px',
+                            backgroundColor: colors.darkPurple,
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: '600',
+                        }}
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
+            )}
             <h2 style={headingStyle}>Volunteer History</h2>
 
             {loading ? (

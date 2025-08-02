@@ -18,24 +18,28 @@
     "exclude": [
       "test/**",
       "server/controllers/**",
+      "server/server.js",
       "server/coverage/lcov-report",
       "server/models",
       "coverage/**",
       "client/**",
       "server/routes/adminLoginRoutes.js",
-      "server/routes/matchingRoutes.js"
-
+      "server/routes/matchingRoutes.js",
+      "server/routes/eventRoutes.js",
+      "server/routes/profileRoutes.js",
+      "server/routes/userRoutes.js"
     ]
   },
   "jest": {
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/test/volunteerHistory.test.js",
-      "/test/notifications.test.js",
-      "/client/src/App.test.js"
-    ]
-  },
+  "testEnvironment": "node",
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/test/volunteerHistory.test.js",
+    "/test/notifications.test.js",
+    "/client/src/App.test.js"
+  ],
+  "setupFiles": ["<rootDir>/test/setup.js"]
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DorianGriffin/COSC-4353.git"
@@ -48,6 +52,7 @@
   },
   "homepage": "https://github.com/DorianGriffin/COSC-4353#readme",
   "dependencies": {
+    "express-session": "^1.18.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.14.2",
@@ -59,6 +64,7 @@
     "jest": "^27.5.1",
     "mocha": "^11.7.1",
     "nyc": "^17.1.0",
+    "sinon": "^21.0.0",
     "supertest": "^7.1.3"
   }
 }

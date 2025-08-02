@@ -10,8 +10,10 @@ const AdminEventManagement = () => {
   const [editingEvent, setEditingEvent] = useState(null);
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [isLoadingEvents, setIsLoadingEvents] = useState(true);
   const navigate = useNavigate();
 
+  const SERVER_URL = "http://localhost:8080";
   const [formData, setFormData] = useState({
     name: "",
     description: "",
@@ -42,35 +44,28 @@ const AdminEventManagement = () => {
   const urgencyLevels = ["low", "medium", "high", "critical"];
 
   useEffect(() => {
-    // mock events
-    setEvents([
-      {
-        event_id: 1,
-        name: "Park Clean Up",
-        description: "Help clean the local park",
-        City: "Houston",
-        State: "TX",
-        zip: "77004",
-        urgency_level: "medium",
-        required_skills: ["Physical Labor", "Organization"],
-        start_datetime: "2025-08-01T09:00",
-        end_datetime: "2025-08-01T12:00"
-      },
-      {
-        event_id: 2,
-        name: "Food Drive",
-        description: "Assist with sorting food donations",
-        City: "Dallas",
-        State: "TX",
-        zip: "75201",
-        urgency_level: "high",
-        required_skills: ["Organization", "Leadership"],
-        start_datetime: "2025-08-05T10:00",
-        end_datetime: "2025-08-05T14:00"
-      }
-    ]);
+    fetchEvents();
   }, []);
 
+  const fetchEvents = async () => {
+    setIsLoadingEvents(true);
+    try {
+      const response = await fetch(`${SERVER_URL}/api/events`);
+      if (response.ok) {
+        const data = await response.json();
+        setEvents(data.events || []);
+      } else {
+        setMessage("Failed to fetch events");
+        setEvents([]);
+      }
+    } catch (error) {
+      console.error("Error fetching events:", error);
+      setMessage("Error fetching events");
+      setEvents([]);
+    } finally {
+      setIsLoadingEvents(false);
+    }
+  };
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -126,34 +121,78 @@ const AdminEventManagement = () => {
     }
 
     if (editingEvent) {
-      // edit
-      setEvents((prev) =>
-        prev.map((ev) => ev.event_id === editingEvent.event_id
-          ? { ...formData, event_id: editingEvent.event_id }
-          : ev
-        )
-      );
-      setMessage("Event updated successfully!");
+      updateEvent();
     } else {
-      // create
-      setEvents((prev) => [
-        ...prev,
-        { ...formData, event_id: Date.now() }
-      ]);
-      setMessage("Event created successfully!");
+      createEvent();
     }
-
-    resetForm();
-    setIsLoading(false);
   };
 
+  const createEvent = async () => {
+    try {
+      console.log('Creating event with data:', formData);
+      const response = await fetch(`${SERVER_URL}/api/events/create`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      console.log('Response status:', response.status);
+      console.log('Response headers:', response.headers);
+      
+      const data = await response.json();
+      console.log('Response data:', data);
+
+      if (response.ok) {
+        setMessage("Event created successfully!");
+        resetForm();
+        fetchEvents(); // Refresh the events list
+      } else {
+        setMessage(data.message || "Failed to create event");
+      }
+    } catch (error) {
+      console.error("Error creating event:", error);
+      setMessage("Error creating event");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const updateEvent = async () => {
+    try {
+      console.log('Updating event with data:', formData);
+      const response = await fetch(`${SERVER_URL}/api/events/${editingEvent.event_id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Event updated successfully!");
+        resetForm();
+        fetchEvents(); // Refresh the events list
+      } else {
+        setMessage(data.message || "Failed to update event");
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+      setMessage("Error updating event");
+    } finally {
+      setIsLoading(false);
+    }
+  };
   const handleEdit = (event) => {
     setFormData({
       name: event.name || "",
       description: event.description || "",
       location: event.location || "",
-      city: event.City || "",
-      state: event.State || "",
+      city: event.city || "",
+      state: event.state || "",
       zip: event.zip || "",
       required_skills: Array.isArray(event.required_skills) ? event.required_skills : [],
       urgency_level: event.urgency_level || "",
@@ -164,10 +203,26 @@ const AdminEventManagement = () => {
     setShowForm(true);
   };
 
-  const handleDelete = (eventId) => {
+  const handleDelete = async (eventId) => {
     if (!window.confirm("Are you sure you want to delete this event?")) return;
-    setEvents((prev) => prev.filter((ev) => ev.event_id !== eventId));
-    setMessage("Event deleted successfully!");
+    
+    try {
+      const response = await fetch(`${SERVER_URL}/api/events/${eventId}`, {
+        method: "DELETE",
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage("Event deleted successfully!");
+        fetchEvents(); // Refresh the events list
+      } else {
+        setMessage(data.message || "Failed to delete event");
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+      setMessage("Error deleting event");
+    }
   };
 
   return (
@@ -339,7 +394,9 @@ const AdminEventManagement = () => {
 
         <div className="events-list">
           <h2>Existing Events</h2>
-          {events.length === 0 ? (
+          {isLoadingEvents ? (
+            <p>Loading events...</p>
+          ) : events.length === 0 ? (
             <p>No events found. Create your first event!</p>
           ) : (
             <div className="events-grid">
@@ -347,11 +404,30 @@ const AdminEventManagement = () => {
                 <div key={ev.event_id} className="event-card">
                   <div className="event-header">
                     <h3>{ev.name}</h3>
-                    <span className={`urgency-badge ${ev.urgency_level}`}>{ev.urgency_level}</span>
+                    <div className="event-badges">
+                      {(() => {
+                        const now = new Date();
+                        const endDate = ev.end_datetime ? new Date(ev.end_datetime) : null;
+                        const isPast = endDate && endDate < now;
+                        
+                        return (
+                          <>
+                            {isPast && <span className="status-badge past">PAST</span>}
+                            <span className={`urgency-badge ${ev.urgency_level}`}>{ev.urgency_level}</span>
+                          </>
+                        );
+                      })()}
+                    </div>
                   </div>
                   <p>{ev.description}</p>
-                  <p><strong>Location:</strong> {ev.City}, {ev.State} {ev.zip}</p>
-                  <p><strong>Skills:</strong> {ev.required_skills.join(", ")}</p>
+                  <p><strong>Location:</strong> {[ev.location, ev.city, ev.state, ev.zip].filter(Boolean).join(', ')}</p>
+                  {ev.start_datetime && (
+                    <p><strong>Start:</strong> {new Date(ev.start_datetime).toLocaleString()}</p>
+                  )}
+                  {ev.end_datetime && (
+                    <p><strong>End:</strong> {new Date(ev.end_datetime).toLocaleString()}</p>
+                  )}
+                  <p><strong>Skills:</strong> {Array.isArray(ev.required_skills) ? ev.required_skills.join(", ") : (ev.required_skills || "No skills specified")}</p>
                   <div className="event-actions">
                     <button onClick={() => handleEdit(ev)} className="btn-edit">Edit</button>
                     <button onClick={() => handleDelete(ev.event_id)} className="btn-delete">Delete</button>

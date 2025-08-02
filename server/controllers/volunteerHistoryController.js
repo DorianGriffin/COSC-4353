@@ -1,34 +1,43 @@
-exports.getVolunteerHistory = (req, res) => {
-    const userId = parseInt(req.params.userId, 10);
+// server/controllers/volunteerHistoryController.js
+const db = require("../models/db");
 
-    // validation
-    if (isNaN(userId) || userId <= 0) {
-        return res.status(400).json({ error: 'Invalid user ID' });
+const getVolunteerHistory = async (req, res) => {
+    const userId = req.params.userId;
+
+    try {
+        const [rows] = await db.query(
+            `SELECT
+                e.name AS event_name,
+                e.description,
+                CONCAT(e.City, ', ', e.State) AS location,
+                GROUP_CONCAT(DISTINCT s.skill_name SEPARATOR ', ') AS required_skills,
+                e.urgency_level AS urgency,
+                e.start_datetime AS event_date,
+                'Attended' AS status,  -- fixed status since these are past participations
+                vh.participation_date,
+                vh.feedback,
+                vh.rating
+            FROM VolunteerHistory vh
+            JOIN Events e ON vh.event_id = e.event_id
+            LEFT JOIN EventSkills es ON e.event_id = es.event_id
+            LEFT JOIN Skills s ON es.skill_id = s.skill_id
+            WHERE vh.user_id = ?
+            GROUP BY
+                e.event_id, e.name, e.description, e.City, e.State, e.urgency_level, e.start_datetime, vh.participation_date, vh.feedback, vh.rating
+            ORDER BY vh.participation_date DESC;
+`,
+            [userId]
+        );
+
+        res.status(200).json(rows);
+    } catch (err) {
+        console.error("Error fetching volunteer history:", err);
+        res.status(500).json({ error: "Failed to fetch volunteer history" });
     }
+};
 
-    // hardcoded volunteer data
-    const hardcodedData = [
-        {
-            event_name: 'Community Clean-Up',
-            description: 'Picking up trash in the park',
-            location: 'Springfield, IL',
-            required_skills: 'Teamwork, Time Management',
-            urgency: 'Medium',
-            event_date: new Date().toISOString(),
-            status: 'completed'
-        },
-        {
-            event_name: 'Food Drive',
-            description: 'Distributing food to those in need',
-            location: 'Chicago, IL',
-            required_skills: 'Organization',
-            urgency: 'High',
-            event_date: new Date().toISOString(),
-            status: 'assigned'
-        }
-    ];
-
-    res.json(hardcodedData);
+module.exports = {
+    getVolunteerHistory,
 };
 
 
