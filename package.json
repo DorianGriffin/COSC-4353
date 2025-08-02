@@ -31,14 +31,15 @@
     ]
   },
   "jest": {
-    "testEnvironment": "node",
-    "testPathIgnorePatterns": [
-      "/node_modules/",
-      "/test/volunteerHistory.test.js",
-      "/test/notifications.test.js",
-      "/client/src/App.test.js"
-    ]
-  },
+  "testEnvironment": "node",
+  "testPathIgnorePatterns": [
+    "/node_modules/",
+    "/test/volunteerHistory.test.js",
+    "/test/notifications.test.js",
+    "/client/src/App.test.js"
+  ],
+  "setupFiles": ["<rootDir>/test/setup.js"]
+},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/DorianGriffin/COSC-4353.git"

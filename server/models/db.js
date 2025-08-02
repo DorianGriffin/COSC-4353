@@ -11,6 +11,7 @@ const db = mysql.createPool({
   port: 3306,
   ssl: {
     ca: fs.readFileSync('/Users/erinsebastian/Downloads/DigiCertGlobalRootCA.crt.pem'),
+    rejectUnauthorized: false,
   },
   waitForConnections: true,
   connectionLimit: 10,
