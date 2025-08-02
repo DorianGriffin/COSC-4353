@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
+
 
 const NotificationsPage = () => {
     const [notifications, setNotifications] = useState([]);
@@ -9,7 +11,11 @@ const NotificationsPage = () => {
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const userId = storedUser?.user_id;
 
-    // Set the page background color on mount and clean it on unmount
+    const navigate = useNavigate(); 
+
+    const handleGoToDashboard = () => {
+        navigate('/volunteer-dashboard');
+    };
     useEffect(() => {
         const originalBg = document.body.style.backgroundColor;
         document.body.style.backgroundColor = '#CCCCFF'; // Periwinkle page background
@@ -130,6 +136,24 @@ const NotificationsPage = () => {
 
     return (
         <div style={containerStyle}>
+            {userId && (
+                <div style={{ textAlign: 'right', marginBottom: '20px' }}>
+                    <button
+                        onClick={handleGoToDashboard}
+                        style={{
+                            padding: '8px 16px',
+                            backgroundColor: colors.darkPurple,
+                            color: 'white',
+                            border: 'none',
+                            borderRadius: '8px',
+                            cursor: 'pointer',
+                            fontWeight: '600',
+                        }}
+                    >
+                        Back to Dashboard
+                    </button>
+                </div>
+            )}
             <h2 style={headingStyle}>Notifications</h2>
             {loading ? (
                 <p style={loadingNoNotifTextStyle}>Loading...</p>

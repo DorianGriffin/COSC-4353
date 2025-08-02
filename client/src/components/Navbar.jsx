@@ -1,15 +1,63 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../pages/AuthContext";
+import { useState, useEffect } from "react";
 
 const Navbar = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout } = useAuth();
+  const [adminUser, setAdminUser] = useState(null);
+
+  // Check for admin authentication on component mount and localStorage changes
+  useEffect(() => {
+    const checkAdminAuth = () => {
+      try {
+        const adminData = localStorage.getItem('adminUser');
+        if (adminData) {
+          const parsedAdmin = JSON.parse(adminData);
+          if (parsedAdmin.username && parsedAdmin.role === 'admin') {
+            setAdminUser(parsedAdmin);
+          } else {
+            setAdminUser(null);
+          }
+        } else {
+          setAdminUser(null);
+        }
+      } catch (error) {
+        console.error('Error parsing admin data:', error);
+        setAdminUser(null);
+      }
+    };
+
+    checkAdminAuth();
+
+    // Listen for localStorage changes (when admin logs in/out)
+    const handleStorageChange = (e) => {
+      if (e.key === 'adminUser') {
+        checkAdminAuth();
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // Also check periodically in case of same-tab changes
+    const interval = setInterval(checkAdminAuth, 1000);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      clearInterval(interval);
+    };
+  }, []);
 
   const hideNavbarRoutes = [
     "/login",
     "/register",
     "/forgot-password",
+    "/admineventmanagement",
+    "/adminvolunteermatching",
+    "/admin-login",
+    "/events",
+    "/admin",
   ];
 
   if (
@@ -19,10 +67,20 @@ const Navbar = () => {
     return null;
   }
 
-  const handleLogout = () => {
-    logout(); // Clears context and localStorage
+  const handleUserLogout = () => {
+    logout(); // Clears context and localStorage for regular users
     navigate("/login");
   };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem('adminUser');
+    setAdminUser(null);
+    navigate("/");
+  };
+
+  // Debug logging
+  console.log('Navbar - Admin user:', adminUser);
+  console.log('Navbar - Regular user:', user);
 
   return (
     <nav
@@ -43,8 +101,75 @@ const Navbar = () => {
         VolunteerApp
       </div>
 
-      <div style={{ display: "flex", gap: "1rem" }}>
-        {!user ? (
+      <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
+        {adminUser ? (
+          // Admin is logged in
+          <>
+            <span style={{ marginRight: "1rem" }}>
+              Welcome, {adminUser.username}
+            </span>
+            <button
+              onClick={() => navigate("/admin")}
+              style={{
+                backgroundColor: "#E91E63",
+                border: "none",
+                padding: "0.5rem 1rem",
+                borderRadius: "4px",
+                color: "white",
+                cursor: "pointer",
+                marginRight: "0.5rem",
+              }}
+            >
+              Admin Dashboard
+            </button>
+            <button
+              onClick={handleAdminLogout}
+              style={{
+                backgroundColor: "#9C27B0",
+                border: "none",
+                color: "white",
+                padding: "0.5rem 1rem",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Logout
+            </button>
+          </>
+        ) : user ? (
+          // Regular user is logged in
+          <>
+            <span style={{ marginRight: "1rem" }}>
+              Welcome, {user.first_name || user.username}
+            </span>
+            <button
+              onClick={() => navigate("/volunteer-dashboard")}
+              style={{
+                backgroundColor: "transparent",
+                border: "none",
+                color: "white",
+                cursor: "pointer",
+                marginRight: "1rem",
+              }}
+            >
+              Dashboard
+            </button>
+            <button
+              onClick={handleUserLogout}
+              style={{
+                backgroundColor: "#9C27B0",
+                border: "none",
+                color: "white",
+                padding: "0.5rem 1rem",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Log Out
+            </button>
+          </>
+        ) : (
+          // No one is logged in
           <>
             <button
               onClick={() => navigate("/login")}
@@ -81,34 +206,6 @@ const Navbar = () => {
             >
               Get Started
             </button>
-          </>
-        ) : (
-          <>
-            <button
-              onClick={() => navigate("/volunteer-dashboard")}
-              style={{
-                backgroundColor: "transparent",
-                border: "none",
-                color: "white",
-                cursor: "pointer",
-                marginRight: "1rem",
-              }}
-            >
-              Dashboard
-            </button>
-          <button
-            onClick={handleLogout}
-            style={{
-              backgroundColor: "#9C27B0",
-              border: "none",
-              color: "white",
-              padding: "0.5rem 1rem",
-              borderRadius: "4px",
-              cursor: "pointer",
-            }}
-          >
-            Log Out
-          </button>
           </>
         )}
       </div>

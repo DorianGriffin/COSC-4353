@@ -1,4 +1,3 @@
-'use client';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -50,20 +49,32 @@ const AdminVolunteerMatching = () => {
     }
   };
     fetchMatches(); }, [userId]);
+
+ const handleLogout = () => {
+   // Clear any stored admin data
+   localStorage.removeItem('admin');
+   localStorage.removeItem('user');
+    localStorage.removeItem('adminUser');
+   // Navigate back to home
+   navigate('/');
+ };
+
   ///
   return(
     <div className="admin-container">
-      <nav className="navbar">
-        <div className="logo">VolunteerApp</div>
-        <div className="nav-links">
-          <button className="nav-button active" onClick={() => navigate('/adminvolunteermatching')}>Volunteer Matching</button>
-          <button className="nav-button" onClick={() => navigate('/login')}>Login</button>
-          <button className="nav-button" onClick={() => navigate('/admin')}>Admin</button>
-          <button className="nav-button primary" onClick={() => navigate('/login')}>Get Started</button>
+      <nav className="admin-navbar">
+        <div className="admin-logo">VolunteerApp Admin</div>
+        <div className="admin-nav-links">
+          <button className="nav-btn" onClick={() => navigate("/events")}>
+            Manage Events
+          </button>
+          <button className="nav-btn active">Volunteer Matching</button>
+          <button className="nav-btn" onClick={() => navigate("/")}>Back to Home</button>
+          <button className="nav-btn logout-btn" onClick={handleLogout}>Logout</button>
         </div>
       </nav>
 
-      <div className="content">
+      <div className="admin-content">
         <h2>Volunteer Matched Events</h2>
         <p>Here you can view the events that have been matched with volunteers.</p>
           <div className = "matching-display-div">
@@ -91,4 +102,19 @@ const AdminVolunteerMatching = () => {
     </div>
   );
 };
+<<<<<<< HEAD
 export default AdminVolunteerMatching;
+=======
+
+const styles = {
+  card: {
+    border: '1px solid #ddd',
+    borderRadius: '8px',
+    padding: '1rem',
+    margin: '1rem 0',
+    backgroundColor: '#f9f9f9'
+  }
+};
+
+export default AdminVolunteerMatching;
+>>>>>>> ded4871d262d63e8addac8875b23ddd614f6f860
