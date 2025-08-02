@@ -7,6 +7,42 @@
   line-height: 1.6;
 }
 
+<<<<<<< HEAD
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #C8102E;
+  }
+  
+  .nav-links .nav-button {
+    margin-left: 1rem;
+    background: none;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    color: #C8102E;
+  }
+  .nav-links .nav-button:hover {
+    color: #C8102E;
+    text-decoration: underline;
+  }
+  .nav-button.primary {
+    background-color: #C8102E;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+  }
+  
+  .hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4rem 2rem;
+  }
+  
+  .hero-text {
+    max-width: 50%;
+=======
 .container {
   max-width: 1200px;
   margin: 0 auto;
@@ -491,19 +527,37 @@
     grid-template-columns: 1fr;
     gap: 3rem;
     text-align: center;
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
   }
 
   .hero-text h1 {
     font-size: 2.5rem;
+<<<<<<< HEAD
+    margin-bottom: 1rem;
+    color: #C8102E;
+=======
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
   }
 
   .nav-links {
     flex-wrap: wrap;
     gap: 0.5rem;
   }
+<<<<<<< HEAD
+  
+  .cta-button {
+    background-color: #C8102E;
+    color: white;
+    border: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+=======
 
   .hero-buttons {
     justify-content: center;
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
   }
 
   .floating-card {
@@ -523,19 +577,37 @@
   .testimonials-grid {
     grid-template-columns: 1fr;
   }
+<<<<<<< HEAD
+  .hero-title {
+    font-size: 3rem;
+    font-weight: 800;
+    color: #C8102E;
+    margin-bottom: 1rem;
+=======
 }
 
 @media (max-width: 480px) {
   .container {
     padding: 0 1rem;
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
   }
 
   .navbar {
     padding: 1rem;
   }
+<<<<<<< HEAD
+  .hero-button {
+    background-color: #C8102E;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border-radius: 8px;
+    font-weight: 600;
+    transition: background-color 0.3s ease;
+=======
 
   .hero {
     padding: 4rem 1rem;
+>>>>>>> 11141db268087f3ba14c21b4c99067f18935ae89
   }
 
   .hero-text h1 {
