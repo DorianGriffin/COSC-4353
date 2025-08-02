@@ -72,13 +72,33 @@ const completeProfile = async (req, res) => {
       ]
     );
 
-    for (const skill of [...new Set(data.skills)]) {
-      await db.query(
-        `INSERT IGNORE INTO userskills (user_id, skill_id) VALUES (?, ?)`,
-        [user_id, skill]
-      );
-    }
-
+    
+        // Auto-insert skills into the skills table if missing
+        const skillNames = {
+          1: "Teamwork",
+          2: "Communication",
+          3: "Problem-solving",
+          4: "Empathy",
+          5: "Adaptability",
+          6: "Critical thinking",
+          7: "Conflict resolution",
+          8: "Positive attitude"
+        };
+    
+        for (const skillId of [...new Set(data.skills)]) {
+          const skillName = skillNames[skillId] || `Skill ${skillId}`;
+    
+          await db.query(
+            `INSERT IGNORE INTO skills (skill_id, skill_name) VALUES (?, ?)`,
+            [skillId, skillName]
+          );
+    
+          await db.query(
+            `INSERT IGNORE INTO userskills (user_id, skill_id) VALUES (?, ?)`,
+            [user_id, skillId]
+          );
+        }
+    
     for (const date of [...new Set(data.availability.map(normalizeDate))]) {
       await db.query(
         `INSERT IGNORE INTO useravailability (user_id, available_date) VALUES (?, ?)`,
@@ -160,8 +180,6 @@ module.exports = {
   getProfile,
   getLoggedInProfile,
 };
-
-
 
 /* const db = require("../models/db");
 
@@ -194,10 +212,15 @@ function validateProfile(data) {
   return null;
 }
 
+
 // POST /api/users/complete-profile
 const completeProfile = async (req, res) => {
   const data = req.body;
-  const username = data.username;
+  const username = req.session?.user?.username;
+
+  if (!username) {
+    return res.status(401).json({ success: false, message: "Not logged in. Missing session username." });
+  }
 
   const validationError = validateProfile(data);
   if (validationError)
@@ -209,7 +232,9 @@ const completeProfile = async (req, res) => {
       [username]
     );
 
-    if (userRows.length === 0) return res.status(404).json({ success: false, message: "User not found." });
+    if (userRows.length === 0) {
+      return res.status(404).json({ success: false, message: "User not found." });
+    }
 
     const user_id = userRows[0].user_id;
 
@@ -218,7 +243,16 @@ const completeProfile = async (req, res) => {
        VALUES (?, ?, ?, ?, ?, ?, ?, ?) ON DUPLICATE KEY UPDATE
        fullName = VALUES(fullName), adrlineone=VALUES(adrlineone), adrlinetwo=VALUES(adrlinetwo),
        City=VALUES(City), State=VALUES(State), zipcode=VALUES(zipcode), preferences=VALUES(preferences)`,
-      [user_id, data.fullName, data.adrlineone, data.adrlinetwo, data.City, data.State, data.zipcode, data.preferences || null]
+      [
+        user_id,
+        data.fullName,
+        data.adrlineone,
+        data.adrlinetwo,
+        data.City,
+        data.State,
+        data.zipcode,
+        data.preferences || null,
+      ]
     );
 
     for (const skill of [...new Set(data.skills)]) {
@@ -228,7 +262,6 @@ const completeProfile = async (req, res) => {
       );
     }
 
-    // Normalize date before INSERT IGNORE
     for (const date of [...new Set(data.availability.map(normalizeDate))]) {
       await db.query(
         `INSERT IGNORE INTO useravailability (user_id, available_date) VALUES (?, ?)`,
@@ -244,6 +277,7 @@ const completeProfile = async (req, res) => {
     return res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
+
 
 // GET /api/profile/:username
 const getProfile = async (req, res) => {
@@ -309,5 +343,7 @@ module.exports = {
   getProfile,
   getLoggedInProfile,
 };
+
+
 
  */
