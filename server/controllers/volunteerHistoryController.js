@@ -5,27 +5,30 @@ const getVolunteerHistory = async (req, res) => {
     const userId = req.params.userId;
 
     try {
+        await db.query(`
+            UPDATE EventAssignments ea
+            JOIN Events e ON ea.event_id = e.event_id
+            SET ea.status = 'completed'
+            WHERE ea.user_id = ?
+              AND ea.status = 'assigned'
+              AND e.start_datetime < NOW()
+        `, [userId]);
+
         const [rows] = await db.query(
-            `SELECT
-                e.name AS event_name,
-                e.description,
-                CONCAT(e.City, ', ', e.State) AS location,
-                GROUP_CONCAT(DISTINCT s.skill_name SEPARATOR ', ') AS required_skills,
-                e.urgency_level AS urgency,
-                e.start_datetime AS event_date,
-                'Attended' AS status,  -- fixed status since these are past participations
-                vh.participation_date,
-                vh.feedback,
-                vh.rating
-            FROM VolunteerHistory vh
-            JOIN Events e ON vh.event_id = e.event_id
-            LEFT JOIN EventSkills es ON e.event_id = es.event_id
-            LEFT JOIN Skills s ON es.skill_id = s.skill_id
-            WHERE vh.user_id = ?
-            GROUP BY
-                e.event_id, e.name, e.description, e.City, e.State, e.urgency_level, e.start_datetime, vh.participation_date, vh.feedback, vh.rating
-            ORDER BY vh.participation_date DESC;
-`,
+            `SELECT 
+        e.name AS event_name,
+        e.description,
+        CONCAT(e.City, ', ', e.State) AS location,
+        e.required_skills,
+        e.urgency_level AS urgency,
+        e.start_datetime AS event_date,
+        ea.status
+    FROM EventAssignments ea
+    JOIN Events e ON ea.event_id = e.event_id
+    WHERE ea.user_id = ?
+    GROUP BY 
+        e.event_id, ea.status, e.name, e.description, e.City, e.State, e.urgency_level, e.start_datetime, e.required_skills
+    ORDER BY e.start_datetime DESC`,
             [userId]
         );
 
@@ -39,6 +42,7 @@ const getVolunteerHistory = async (req, res) => {
 module.exports = {
     getVolunteerHistory,
 };
+
 
 
 
