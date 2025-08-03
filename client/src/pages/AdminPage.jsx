@@ -1,6 +1,7 @@
 import React from 'react';
 import './AdminPage.css'
 import { useNavigate } from 'react-router-dom';
+import VolunteerReportDownload from './VolunteerReportDownload.jsx';
 
 const AdminPage = () => {
     const navigate = useNavigate();
@@ -101,6 +102,12 @@ const AdminPage = () => {
                         </button>
                     </div>
                 </div>
+
+                <div className="volunteer-report-section">
+                    <VolunteerReportDownload />
+                </div>
+
+
             </div>
         </div>
     );
