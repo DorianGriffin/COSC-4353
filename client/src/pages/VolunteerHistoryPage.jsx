@@ -170,11 +170,24 @@ const VolunteerHistoryPage = () => {
                                     <td style={tdStyle}>{a.event_name}</td>
                                     <td style={tdStyle}>{a.description}</td>
                                     <td style={tdStyle}>{a.location}</td>
-                                    <td style={tdStyle}>{a.required_skills || 'None'}</td>
+                                    <td style={tdStyle}>
+                                        {Array.isArray(a.required_skills)
+                                            ? a.required_skills.join(', ')
+                                            : typeof a.required_skills === 'string'
+                                                ? (() => {
+                                                    try {
+                                                        const parsed = JSON.parse(a.required_skills);
+                                                        return Array.isArray(parsed) ? parsed.join(', ') : 'None';
+                                                    } catch {
+                                                        return 'None';
+                                                    }
+                                                })()
+                                                : 'None'}
+                                    </td>
                                     <td style={tdStyle}>{a.urgency}</td>
                                     <td style={tdStyle}>{new Date(a.event_date).toLocaleDateString()}</td>
                                     <td style={{ ...tdStyle, fontWeight: 'bold', color: statusColor(a.status) }}>
-                                        {a.status === 'assigned' ? 'Attending' : a.status === 'completed' ? 'Attended' : a.status.charAt(0).toUpperCase() + a.status.slice(1)}
+                                        {a.status.charAt(0).toUpperCase() + a.status.slice(1)}
                                     </td>
                                 </tr>
                             );
