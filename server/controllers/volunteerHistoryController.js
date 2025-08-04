@@ -5,34 +5,56 @@ const getVolunteerHistory = async (req, res) => {
     const userId = req.params.userId;
 
     try {
+        // mark assignments as 'completed' if they are in the past and still marked as 'assigned'
         await db.query(`
             UPDATE EventAssignments ea
             JOIN Events e ON ea.event_id = e.event_id
             SET ea.status = 'completed'
             WHERE ea.user_id = ?
               AND ea.status = 'assigned'
-              AND e.start_datetime < NOW()
+              AND e.end_datetime < NOW()
         `, [userId]);
 
-        const [rows] = await db.query(
+        // get current/upcoming assignments (event end date in the future) (NOT IN USE)
+        const [upcomingRows] = await db.query(
             `SELECT 
-        e.name AS event_name,
-        e.description,
-        CONCAT(e.City, ', ', e.State) AS location,
-        e.required_skills,
-        e.urgency_level AS urgency,
-        e.start_datetime AS event_date,
-        ea.status
-    FROM EventAssignments ea
-    JOIN Events e ON ea.event_id = e.event_id
-    WHERE ea.user_id = ?
-    GROUP BY 
-        e.event_id, ea.status, e.name, e.description, e.City, e.State, e.urgency_level, e.start_datetime, e.required_skills
-    ORDER BY e.start_datetime DESC`,
+                e.name AS event_name,
+                e.description,
+                CONCAT(e.City, ', ', e.State) AS location,
+                e.required_skills,
+                e.urgency_level AS urgency,
+                e.start_datetime,
+                e.end_datetime,
+                ea.status
+            FROM EventAssignments ea
+            JOIN Events e ON ea.event_id = e.event_id
+            WHERE ea.user_id = ? AND e.end_datetime >= NOW()
+            ORDER BY e.start_datetime ASC`,
             [userId]
         );
 
-        res.status(200).json(rows);
+        // get past assignments (event end date in the past)
+        const [pastRows] = await db.query(
+            `SELECT 
+                e.name AS event_name,
+                e.description,
+                CONCAT(e.City, ', ', e.State) AS location,
+                e.required_skills,
+                e.urgency_level AS urgency,
+                e.start_datetime,
+                e.end_datetime,
+                ea.status
+            FROM EventAssignments ea
+            JOIN Events e ON ea.event_id = e.event_id
+            WHERE ea.user_id = ? AND e.end_datetime < NOW()
+            ORDER BY e.start_datetime DESC`,
+            [userId]
+        );
+
+        res.status(200).json({
+            upcoming: upcomingRows,
+            past: pastRows
+        });
     } catch (err) {
         console.error("Error fetching volunteer history:", err);
         res.status(500).json({ error: "Failed to fetch volunteer history" });
