@@ -96,18 +96,20 @@ exports.ismatched = async (req, res) => {
             }
         }
 
-        if (matchedAssignments.length > 0) {
+        // Filter out already assigned events to avoid duplicates
+        const newMatchedAssignments = matchedAssignments.filter(a => !eventStatusMap[a.event_id]);
+
+        if (newMatchedAssignments.length > 0) {
             // Use a transaction to insert assignments in bulk
             const connection = await db.getConnection();
             try {
                 await connection.beginTransaction();
 
-                // Bulk insert assignments
                 const insertAssignmentsQuery = `
-          INSERT INTO eventassignments (event_id, user_id, assigned_at, status)
-          VALUES ?
+            INSERT INTO eventassignments (event_id, user_id, assigned_at, status)
+            VALUES ?
         `;
-                const assignmentsValues = matchedAssignments.map(assignment => [
+                const assignmentsValues = newMatchedAssignments.map(assignment => [
                     assignment.event_id,
                     assignment.user_id,
                     assignment.assigned_at,
@@ -117,7 +119,7 @@ exports.ismatched = async (req, res) => {
                 await connection.query(insertAssignmentsQuery, [assignmentsValues]);
 
                 await connection.commit();
-                console.log('Successfully saved matched assignments to the database.');
+                console.log('Successfully saved new matched assignments to the database.');
                 res.status(200).json({ matchedEvents });
             } catch (error) {
                 await connection.rollback();
@@ -127,8 +129,10 @@ exports.ismatched = async (req, res) => {
                 connection.release();
             }
         } else {
-            res.status(404).json({ error: 'No matching events found' });
+            console.log('No new assignments to insert (all already exist).');
+            res.status(200).json({ matchedEvents });
         }
+
     } catch (error) {
         console.error('Error matching volunteer:', error);
         res.status(500).json({ error: 'Internal server error' });
