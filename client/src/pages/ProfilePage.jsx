@@ -1,8 +1,8 @@
-// ProfilePage.jsx
 import React, { useState, useEffect } from "react"; 
 import { useNavigate } from "react-router-dom";
 import DatePicker from "react-multi-date-picker";
 import "./Login.css";
+import "./ProfilePage.css";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -19,6 +19,7 @@ const ProfilePage = () => {
     skills: [],
     preferences: "",
     availability: [],
+    showSkills: false,
   });
 
   const states = [
@@ -36,16 +37,14 @@ const ProfilePage = () => {
     { id: 6, name: "Physical Labor" },
     { id: 7, name: "Teaching" },
     { id: 8, name: "Cooking" },
-    {id: 9, name: "Driving" },
-    {id: 10, name: "Technology" },
-    //{id: 11, name: "Translation" },
-    {id: 12, name: "Medical" },
-    {id: 13, name: "Construction" },
-    {id: 14, name: "Event Planning" },
-    {id: 15, name: "Fundraising" }
+    { id: 9, name: "Driving" },
+    { id: 10, name: "Technology" },
+    { id: 12, name: "Medical" },
+    { id: 13, name: "Construction" },
+    { id: 14, name: "Event Planning" },
+    { id: 15, name: "Fundraising" }
   ];
 
-  //  Pre-fill profile on mount
   useEffect(() => {
     const fetchExistingProfile = async () => {
       try {
@@ -54,8 +53,9 @@ const ProfilePage = () => {
         });
         const data = await res.json();
         if (data.success) {
-          setFormData({
-            fullName: data.profile.fullName || "", // fi
+          setFormData(prev => ({
+            ...prev,
+            fullName: data.profile.fullName || "",
             address1: data.profile.adrlineone || "",
             address2: data.profile.adrlinetwo || "",
             city: data.profile.City || "",
@@ -64,7 +64,7 @@ const ProfilePage = () => {
             preferences: data.profile.preferences || "",
             skills: data.skills?.map(s => s.skill_id) || [],
             availability: data.availability?.map(d => new Date(d)) || [],
-          });
+          }));
         }
       } catch (err) {
         console.error("Failed to fetch existing profile", err);
@@ -74,15 +74,8 @@ const ProfilePage = () => {
   }, []);
 
   const handleChange = (e) => {
-    const { name, value, type, selectedOptions } = e.target;
-    if (type === "select-multiple") {
-      const values = Array.from(selectedOptions, opt =>
-        name === "skills" ? Number(opt.value) : opt.value
-      );
-      setFormData(prev => ({ ...prev, [name]: values }));
-    } else {
-      setFormData(prev => ({ ...prev, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleDateChange = (dates) => {
@@ -92,27 +85,23 @@ const ProfilePage = () => {
     }));
   };
 
-  // Fixed handleSubmit
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSaving(true);
     setMessage("");
     try {
-      //console.log("Formatted availability dates:", formData.availability.map(d => d.format("YYYY-MM-DD")));
       const formattedAvailability = Array.isArray(formData.availability) && formData.availability.length > 0
-      ? formData.availability.map(d => {
-        if (typeof d === "object" && typeof d.format === "function") {
-          return d.format("YYYY-MM-DD");
-        } else if (d instanceof Date) {
-          return d.toISOString().split("T")[0];
-        } else if (typeof d === "string") {
-          return new Date(d).toISOString().split("T")[0];
-        }
-        return d;
-      })
-    : undefined;
-
-    console.log("Formatted availability dates:", formattedAvailability);//new
+        ? formData.availability.map(d => {
+          if (typeof d === "object" && typeof d.format === "function") {
+            return d.format("YYYY-MM-DD");
+          } else if (d instanceof Date) {
+            return d.toISOString().split("T")[0];
+          } else if (typeof d === "string") {
+            return new Date(d).toISOString().split("T")[0];
+          }
+          return d;
+        })
+        : undefined;
 
       const res = await fetch("http://localhost:8080/api/profile/complete-profile", {
         method: "POST",
@@ -127,13 +116,11 @@ const ProfilePage = () => {
           zipcode: formData.zip,
           preferences: formData.preferences,
           skills: formData.skills,
-          ...(formattedAvailability !== undefined && { availability: formattedAvailability }),//new
+          ...(formattedAvailability !== undefined && { availability: formattedAvailability }),
         }),
       });
 
       const data = await res.json();
-      console.log("Profile completion response", data);
-
       if (data.success) {
         setMessage("Profile completed successfully!");
         setTimeout(() => navigate("/volunteer-dashboard"), 1500);
@@ -197,14 +184,47 @@ const ProfilePage = () => {
               <RequiredLabel>Zip</RequiredLabel>
               <input name="zip" value={formData.zip} onChange={handleChange} maxLength={9} className="form-input" />
             </div>
+
+            
             <div className="form-group">
               <RequiredLabel>Skills (multiple select)</RequiredLabel>
-              <select multiple name="skills" value={formData.skills} onChange={handleChange} className="form-input">
-                {Skills.map(skill => (
-                  <option key={skill.id} value={skill.id}>{skill.name}</option>
-                ))}
-              </select>
+              <div className="custom-multiselect">
+                <button
+                  type="button"
+                  className="dropdown-toggle"
+                  onClick={() =>
+                    setFormData(prev => ({ ...prev, showSkills: !prev.showSkills }))
+                  }
+                >
+                  Select your skills
+                  <span className={`chevron-icon ${formData.showSkills ? "open" : ""}`}>▼</span>
+                </button>
+                {formData.showSkills && (
+                  <div className="dropdown-menu">
+                    {Skills.map(skill => (
+                      <label key={skill.id} className="dropdown-item">
+                        <input
+                          type="checkbox"
+                          value={skill.id}
+                          checked={formData.skills.includes(skill.id)}
+                          onChange={e => {
+                            const skillId = Number(e.target.value);
+                            setFormData(prev => ({
+                              ...prev,
+                              skills: e.target.checked
+                                ? [...prev.skills, skillId]
+                                : prev.skills.filter(id => id !== skillId)
+                            }));
+                          }}
+                        />
+                        {skill.name}
+                      </label>
+                    ))}
+                  </div>
+                )}
+              </div>
             </div>
+
             <div className="form-group">
               <label>Preferences</label>
               <textarea name="preferences" value={formData.preferences} onChange={handleChange} className="form-input" />
