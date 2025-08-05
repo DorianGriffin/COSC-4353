@@ -11,12 +11,6 @@ const AdminLogin = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    // Demo admin credentials - in production, this would be handled by a backend
-    const ADMIN_CREDENTIALS = {
-        username: 'admin@volunteer.com',
-        password: 'admin123'
-    };
-
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setCredentials(prev => ({
@@ -27,29 +21,45 @@ const AdminLogin = () => {
     };
 
     const handleSubmit = async (e) => {
-        e.preventDefault();
-        setLoading(true);
-        setError('');
-
-        // Simulate API call delay
-        setTimeout(() => {
-            if (credentials.username === ADMIN_CREDENTIALS.username && 
-                credentials.password === ADMIN_CREDENTIALS.password) {
-                
-                // Store admin session
-                localStorage.setItem('adminUser', JSON.stringify({
-                    username: credentials.username,
-                    role: 'admin',
-                    loginTime: new Date().toISOString()
-                }));
-                
-                navigate('/admin');
-            } else {
-                setError('Invalid username or password');
-            }
-            setLoading(false);
-        }, 1000);
-    };
+      e.preventDefault();
+      setLoading(true);
+      setError("");
+  
+      const { username, password } = credentials;
+  
+      try {
+          const response = await fetch("http://localhost:8080/api/users/login", {
+              method: "POST",
+              credentials: "include",
+              headers: {
+                  "Content-Type": "application/json"
+              },
+              body: JSON.stringify({ username, password })
+          });
+  
+          const data = await response.json();
+  
+          if (response.ok) {
+              const user = data.user;
+  
+              // Check if user is an admin
+              if (user.role === "admin") {
+                  localStorage.setItem("adminUser", JSON.stringify(user));
+                  navigate("/admin");
+              } else {
+                  setError("Access denied: Not an admin.");
+              }
+          } else {
+              setError(data.message || "Login failed.");
+          }
+      } catch (err) {
+          console.error("Login error:", err);
+          setError("Server error. Please try again.");
+      } finally {
+          setLoading(false);
+      }
+  };
+  
 
     return (
         <div className="admin-login-container">
@@ -99,7 +109,6 @@ const AdminLogin = () => {
               </form>
       
               <div className="demo-credentials">
-                <strong>Demo:</strong> Username: admin@volunteer.com | Password: admin123
               </div>
       
               <div style={{ textAlign: "center", marginTop: "1rem" }}>
