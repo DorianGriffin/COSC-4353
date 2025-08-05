@@ -105,11 +105,18 @@ const Navbar = () => {
       }}
     >
       <div
-        style={{ fontSize: "1.5rem", cursor: "pointer" }}
-        onClick={() => navigate("/")}
-      >
-        VolunteerApp
-      </div>
+  style={{
+    fontSize: "1.5rem",
+    fontWeight: "700",
+    cursor: "pointer",
+    color: "white",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+  }}
+  onClick={() => navigate("/")}
+>
+  VolunteerApp
+</div>
+
 
       <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         {adminUser ? (

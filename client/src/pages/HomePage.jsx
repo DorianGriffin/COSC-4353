@@ -8,6 +8,23 @@ import { useAuth } from './AuthContext';
 const HomePage = () => {
   const navigate = useNavigate();
   const { user } = useAuth();
+  const handleAdminLink = () => {
+    try {
+      const adminData = localStorage.getItem("adminUser");
+      if (adminData) {
+        const parsed = JSON.parse(adminData);
+        if (parsed?.username && parsed?.role === "admin") {
+          navigate("/admin");
+          return;
+        }
+      }
+      navigate("/admin-login");
+    } catch (err) {
+      console.error("Error checking admin status:", err);
+      navigate("/admin-login");
+    }
+  };
+  
 
   // Debug: Let's see what user looks like
   console.log('HomePage - user:', user);
@@ -215,38 +232,33 @@ const HomePage = () => {
             <div className="footer-section">
               <div className="footer-logo">VolunteerApp</div>
               <p>Connecting passionate volunteers with meaningful opportunities worldwide.</p>
-              <div className="social-links">
-                <a href="#" className="social-link">📘</a>
-                <a href="#" className="social-link">🐦</a>
-                <a href="#" className="social-link">📷</a>
-                <a href="#" className="social-link">💼</a>
-              </div>
             </div>
             <div className="footer-section">
               <h4>For Volunteers</h4>
               <ul>
-                <li><a href="#">Find Opportunities</a></li>
-                <li><a href="#">How It Works</a></li>
-                <li><a href="#">Success Stories</a></li>
-                <li><a href="#">Resources</a></li>
+              <a onClick={() => navigate("/login")} style={{ cursor: "pointer" }}> Find Opportunities</a>
               </ul>
             </div>
             <div className="footer-section">
-              <h4>For Organizations</h4>
+              <h4>For Administrators</h4>
               <ul>
-                <li><a href="#">Post Opportunities</a></li>
-                <li><a href="#">Manage Volunteers</a></li>
-                <li><a href="#">Pricing</a></li>
-                <li><a href="#">Support</a></li>
-              </ul>
-            </div>
+                <li>
+                <a onClick={handleAdminLink} style={{ cursor: "pointer" }}>
+                Post Opportunities
+                </a>
+                </li>
+              <li>
+                <a onClick={handleAdminLink} style={{ cursor: "pointer" }}>
+                Manage Volunteers
+              </a>
+            </li>
+            </ul>
+          </div>
+
             <div className="footer-section">
               <h4>Company</h4>
               <ul>
-                <li><a href="#">About Us</a></li>
-                <li><a href="#">Contact</a></li>
-                <li><a href="#">Privacy Policy</a></li>
-                <li><a href="#">Terms of Service</a></li>
+              <li><a onClick={() => navigate("/about")} style={{ cursor: "pointer" }}>About Us</a></li>
               </ul>
             </div>
           </div>
