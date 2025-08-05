@@ -239,12 +239,9 @@ const AdminEventManagement = () => {
       </nav>
 
       <div className="admin-content">
-        <div className="admin-header">
-          <h1>Event Management</h1>
-          <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
-            {showForm ? "Cancel" : "Create New Event"}
-          </button>
-        </div>
+      <div className="admin-header"><h1>Event Management</h1>
+      <button className="btn-primary create-event-button" onClick={() => setShowForm(!showForm)} > {showForm ? "Cancel" : "Create New Event"} </button>
+      </div>
 
         {message && (
           <div className={`message ${message.includes("successfully") ? "success" : "error"}`}>

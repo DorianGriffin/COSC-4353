@@ -16,6 +16,7 @@ import AdminEventManagement from './pages/AdminEventManagement';
 import Admin from './pages/AdminPage';
 import AdminLogin from './pages/AdminLogin';
 import AdminVolunteerMatching from './pages/AdminVolunteerMatching';
+import CreateAdmin from './pages/CreateAdmin';
 
 function App() {
   return (
@@ -36,6 +37,7 @@ function App() {
           <Route path="/adminvolunteermatching" element={<AdminVolunteerMatching />} />
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin-login" element={<AdminLogin />} />
+          <Route path="/create-admin" element={<CreateAdmin />} />
         </Routes>
       </Router>
     </AuthProvider>

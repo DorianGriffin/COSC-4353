@@ -108,8 +108,6 @@ const AdminLogin = () => {
                 </button>
               </form>
       
-              <div className="demo-credentials">
-              </div>
       
               <div style={{ textAlign: "center", marginTop: "1rem" }}>
                 <button

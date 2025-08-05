@@ -8,19 +8,35 @@ const AdminPage = () => {
     
     const handleLogout = () => {
         localStorage.removeItem('adminUser');
+        localStorage.removeItem('user');
         navigate('/admin-login');
     };
     
-    // Get admin user data with fallback
+    // Get admin user data from both possible storage locations
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
-    const adminUsername = adminUser.username || 'Admin';
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    
+    // Use adminUser first, then fallback to user
+    const currentUser = adminUser.username ? adminUser : user;
+    
+    // Debug logging (remove in production)
+    console.log('AdminUser from localStorage:', adminUser);
+    console.log('RegularUser from localStorage:', user);
+    console.log('Current user:', currentUser);
+    
+    // Check if user is head admin (super admin)
+    const isHeadAdmin = (currentUser.role === 'admin' && (currentUser.is_super_admin === 1 || currentUser.is_super_admin === true));
+    
+    console.log('Is head admin:', isHeadAdmin);
+    
+    const adminUsername = currentUser.username || 'Admin';
     
     return (
         <div className="admin-container">
             {/* Top Navigation Bar */}
             <nav className="admin-navbar">
                 <div className="admin-nav-brand">
-                    <div className="brand-icon"></div>
+                    <div className="brand-icon">⚡</div>
                     <span className="brand-text">VolunteerApp Admin</span>
                 </div>
                 <div className="admin-nav-actions">
@@ -59,6 +75,22 @@ const AdminPage = () => {
                 
                 {/* Main Action Cards */}
                 <div className="admin-cards">
+                    {isHeadAdmin && (
+                        <div className="admin-card tertiary" onClick={() => navigate('/create-admin')}>
+                            <div className="card-header">
+                                <div className="card-icon">🛠️</div>
+                                <div className="card-badge">Super Admin</div>
+                            </div>
+                            <div className="card-content">
+                                <h3>Create New Admin</h3>
+                                <p>Register new admin users to manage the platform.</p>
+                            </div>
+                            <div className="card-footer">
+                                <span className="card-action">Go to Admin Creator →</span>
+                            </div>
+                        </div>
+                    )}
+
                     <div className="admin-card primary" onClick={() => navigate('/events')}>
                         <div className="card-header">
                             <div className="card-icon">📅</div>
@@ -92,6 +124,12 @@ const AdminPage = () => {
                 <div className="quick-actions">
                     <h2 className="section-title">Quick Actions</h2>
                     <div className="quick-action-buttons">
+                        {isHeadAdmin && (
+                            <button className="quick-btn" onClick={() => navigate('/create-admin')}>
+                                <span className="btn-icon">👤</span>
+                                Create Admin Account
+                            </button>
+                        )}
                         <button className="quick-btn" onClick={() => navigate('/events')}>
                             <span className="btn-icon">➕</span>
                             Create New Event
@@ -106,8 +144,6 @@ const AdminPage = () => {
                 <div className="volunteer-report-section">
                     <VolunteerReportDownload />
                 </div>
-
-
             </div>
         </div>
     );

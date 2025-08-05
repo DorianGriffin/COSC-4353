@@ -86,6 +86,7 @@ try {
   console.log("   ✓ volunteerHistoryReport loaded successfully");
 
 
+  const adminRoutes = require("./routes/adminRoutes");
   // Register routes
   app.use("/api/users", userRoutes);
   app.use("/api/profile", profileRoutes);
@@ -93,7 +94,8 @@ try {
   app.use("/api/notifications", notificationsRouter);
   app.use("/api/volunteer-history", volunteerHistoryRouter);
   app.use("/api/matching", matchingRouter);
-    app.use("/api/volunteerHistoryReport", volunteerHistoryReport);
+  app.use("/api/volunteerHistoryReport", volunteerHistoryReport);
+  app.use("/api/admin", adminRoutes);
 
   
   console.log(" All routes registered successfully");
