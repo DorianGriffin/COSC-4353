@@ -49,24 +49,24 @@ const AdminVolunteerMatching = () => {
     fetchMatches();
   }, []);
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin');
-    localStorage.removeItem('user');
-    localStorage.removeItem('adminUser');
-    navigate('/');
-  };
+    const handleLogout = () => {
+        localStorage.removeItem('admin');
+        localStorage.removeItem('user');
+        localStorage.removeItem('adminUser');
+        navigate('/');
+    };
 
-  return (
-    <div className="admin-container">
-      <nav className="admin-navbar">
-        <div className="admin-logo">VolunteerApp Admin</div>
-        <div className="admin-nav-links">
-          <button className="nav-btn" onClick={() => navigate("/events")}>Manage Events</button>
-          <button className="nav-btn active">Volunteer Matching</button>
-          <button className="nav-btn" onClick={() => navigate("/")}>Back to Home</button>
-          <button className="nav-btn logout-btn" onClick={handleLogout}>Logout</button>
-        </div>
-      </nav>
+    return (
+        <div className="admin-container">
+            <nav className="admin-navbar">
+                <div className="admin-logo">VolunteerApp Admin</div>
+                <div className="admin-nav-links">
+                    <button className="nav-btn" onClick={() => navigate("/events")}>Manage Events</button>
+                    <button className="nav-btn active">Volunteer Matching</button>
+                    <button className="nav-btn" onClick={() => navigate("/")}>Back to Home</button>
+                    <button className="nav-btn logout-btn" onClick={handleLogout}>Logout</button>
+                </div>
+            </nav>
 
       <div className="admin-content">
         <h2>All Volunteer Matches</h2>
@@ -124,7 +124,7 @@ const AdminVolunteerMatching = () => {
           </button>
         </div>
 
-        {error && <p style={{ color: 'red' }}>{error}</p>}
+                {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {matches.length > 0 ? (
           matches.map((match, index) => (
@@ -200,3 +200,4 @@ const styles = {
 };
 
 export default AdminVolunteerMatching;
+

@@ -1,16 +1,25 @@
+
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import heroImage from './assets/hero.png';
 
 const skillMap = {
-  1: "Teamwork",
+  1: "First Aid",
   2: "Communication",
-  3: "Problem-solving",
-  4: "Empathy",
-  5: "Adaptability",
-  6: "Critical thinking",
-  7: "Conflict resolution",
-  8: "Positive attitude"
+  3: "CPR",
+  4: "Leadership",
+  5: "Organization",
+  6: "Physical Labor",
+  7: "Teaching",
+  8: "Cooking",
+  9: "Driving",
+  10: "Technology",
+  11: "Translation",
+  12: "Medical",
+  13: "Construction",
+  14: "Event Planning",
+  15: "Fundraising"
 };
 
 const VolunteerDashboard = () => {
@@ -67,7 +76,7 @@ const VolunteerDashboard = () => {
         if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
 
         const data = await res.json();
-        setEvents(data.matchedEvents); // expects status field like: ev.status
+        setEvents(data.matchedEvents); 
       } catch (err) {
         console.error("Error fetching matched events:", err);
       }
@@ -86,11 +95,11 @@ const VolunteerDashboard = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  //  CHANGED: now takes `currentStatus` instead of `accepted`
+  
   const handleAcceptOrCancel = async (eventId, currentStatus) => {
     console.log(`Handling ${currentStatus === 'assigned' ? 'cancel' : 'accept'} for event ${eventId}`);
     const action = currentStatus === 'assigned' ? 'cancel' : 'accept';
- //  toggle based on status
+ 
 
     try {
       const res = await fetch(`http://localhost:8080/api/matching/events/${eventId}/${action}`, {
@@ -115,6 +124,25 @@ const VolunteerDashboard = () => {
     }
   };
 
+  const handleMarkComplete = async (eventId) => {
+    try {
+      const res = await fetch(`http://localhost:8080/api/matching/events/${eventId}/complete`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ userId: user.userId })
+      });
+  
+      if (!res.ok) throw new Error(`HTTP error! Status: ${res.status}`);
+  
+      // Remove the completed event from the UI
+      setEvents(prev => prev.filter(ev => ev.event_id !== eventId));
+    } catch (err) {
+      console.error("Error marking event as completed:", err);
+    }
+  };
+  
+
   const handleNavigate = (path) => {
     navigate(path);
     setDropdownOpen(false);
@@ -137,7 +165,7 @@ const VolunteerDashboard = () => {
             </ul>
             <hr />
             <p onClick={() => handleNavigate('/notifications')} style={{ cursor: 'pointer', color: '#dc3545' }}>Notification</p>
-            <p onClick={() => handleNavigate('/profile')} style={{ cursor: 'pointer', color: '#dc3545' }}>Profile</p>
+            <p onClick={() => handleNavigate('/profile')} style={{ cursor: 'pointer', color: '#dc3545' }}> Edit Profile</p>
             <p onClick={() => handleNavigate('/volunteer-history')} style={{ cursor: 'pointer', color: '#dc3545' }}>History</p>
           </div>
         )}
@@ -164,25 +192,36 @@ const VolunteerDashboard = () => {
             <div key={ev.event_id} style={{ border: '1px solid #ccc', borderRadius: '8px', padding: '1rem', marginTop: '1rem' }}>
               <p><strong>{ev.name}</strong></p>
               <p>{new Date(ev.start_datetime).toLocaleDateString()} — {ev.City}, {ev.State}</p>
-
-              {/*  Display status from eventassignments */}
               <p>Status: <strong>{ev.status || 'Not responded'}</strong></p>
-
-              {/*  Updated button to use ev.status instead of ev.accepted */}
               <button
-                onClick={() => handleAcceptOrCancel(ev.event_id, ev.status)} //  pass status to handler
+                onClick={() => handleAcceptOrCancel(ev.event_id, ev.status)}
                 style={{
                   padding: '0.5rem 1rem',
                   background: ev.status === 'assigned' ? '#dc3545' : '#007bff',
                   color: '#fff',
                   borderRadius: '5px',
                   cursor: 'pointer',
-                  border: 'none'
+                  border: 'none',
+                  marginRight: '0.5rem'
                 }}
               >
                 {ev.status === 'assigned' ? 'Cancel' : 'Accept'}
-
               </button>
+              {ev.status === 'assigned' && (
+                <button
+                  onClick={() => handleMarkComplete(ev.event_id)}
+                  style={{
+                  padding: '0.5rem 1rem',
+                  background: '#28a745',
+                  color: '#fff',
+                  borderRadius: '5px',
+                  cursor: 'pointer',
+                  border: 'none'
+                }}
+              >
+                Mark Completed
+              </button>
+            )}
             </div>
           ))}
         </div>

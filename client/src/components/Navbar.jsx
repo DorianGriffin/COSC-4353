@@ -95,7 +95,7 @@ const Navbar = () => {
   return (
     <nav
       style={{
-        backgroundColor: "#3B0A45",
+        backgroundColor: "#b71c1c",
         padding: "1rem 2rem",
         color: "white",
         display: "flex",
@@ -105,11 +105,18 @@ const Navbar = () => {
       }}
     >
       <div
-        style={{ fontSize: "1.5rem", cursor: "pointer" }}
-        onClick={() => navigate("/")}
-      >
-        VolunteerApp
-      </div>
+  style={{
+    fontSize: "1.5rem",
+    fontWeight: "700",
+    cursor: "pointer",
+    color: "white",
+    fontFamily: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif"
+  }}
+  onClick={() => navigate("/")}
+>
+  VolunteerApp
+</div>
+
 
       <div style={{ display: "flex", gap: "1rem", alignItems: "center" }}>
         {adminUser ? (
@@ -202,19 +209,19 @@ const Navbar = () => {
             >
               Admin
             </button>
-            <button
-              onClick={() => navigate("/register")}
-              style={{
-                backgroundColor: "#E91E63",
-                border: "none",
-                padding: "0.5rem 1rem",
-                borderRadius: "4px",
-                color: "white",
-                cursor: "pointer",
-              }}
+            <button onClick={() => navigate("/register")} style={{
+              backgroundColor: "transparent",
+              border: "2px solid white",
+              padding: "0.5rem 1rem",
+              borderRadius: "4px",
+              color: "white",
+              cursor: "pointer",
+              fontWeight: "bold",
+            }}
             >
-              Get Started
+            Get Started
             </button>
+
           </>
         )}
       </div>
