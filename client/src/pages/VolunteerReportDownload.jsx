@@ -206,6 +206,7 @@ const VolunteerReportDownload = () => {
                         <option value="assigned">Assigned</option>
                         <option value="completed">Completed</option>
                         <option value="cancelled">Cancelled</option>
+                        <option value="accepted">Accepted</option>
                     </select>
                 </div>
 
