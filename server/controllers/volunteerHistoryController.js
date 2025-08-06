@@ -5,15 +5,7 @@ const getVolunteerHistory = async (req, res) => {
     const userId = req.params.userId;
 
     try {
-        // mark assignments as 'completed' if they are in the past and still marked as 'assigned'
-        await db.query(`
-            UPDATE EventAssignments ea
-            JOIN Events e ON ea.event_id = e.event_id
-            SET ea.status = 'completed'
-            WHERE ea.user_id = ?
-              AND ea.status = 'assigned'
-              AND e.end_datetime < NOW()
-        `, [userId]);
+
 
         // get current/upcoming assignments (event end date in the future) (NOT IN USE)
         const [upcomingRows] = await db.query(
@@ -35,7 +27,7 @@ const getVolunteerHistory = async (req, res) => {
 
         // get past assignments (event end date in the past)
         const [pastRows] = await db.query(
-            `SELECT 
+            `SELECT
                 e.name AS event_name,
                 e.description,
                 CONCAT(e.City, ', ', e.State) AS location,
@@ -46,7 +38,9 @@ const getVolunteerHistory = async (req, res) => {
                 ea.status
             FROM EventAssignments ea
             JOIN Events e ON ea.event_id = e.event_id
-            WHERE ea.user_id = ? AND e.end_datetime < NOW()
+            WHERE ea.user_id = ?
+                AND DATE(e.end_datetime) <= CURDATE()
+                AND ea.status IN ('accepted', 'completed', 'cancelled')
             ORDER BY e.start_datetime DESC`,
             [userId]
         );
