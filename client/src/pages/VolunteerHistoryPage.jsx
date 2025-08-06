@@ -13,6 +13,8 @@ const VolunteerHistoryPage = () => {
     const [upcomingAssignments, setUpcomingAssignments] = useState([]);
     const [pastAssignments, setPastAssignments] = useState([]);
 
+    const [volunteerSummary, setVolunteerSummary] = useState(null);
+
     const navigate = useNavigate();
 
     const handleGoToDashboard = () => {
@@ -101,10 +103,11 @@ const VolunteerHistoryPage = () => {
 
         axios.get(`http://localhost:8080/api/volunteer-history/${userId}`)
             .then(res => {
-                const { upcoming, past } = res.data;
+                const { upcoming, past, summary } = res.data;
 
                 setUpcomingAssignments(upcoming);
                 setPastAssignments(past);
+                setVolunteerSummary(summary); 
                 setLoading(false);
             })
             .catch(err => {
@@ -215,6 +218,38 @@ const VolunteerHistoryPage = () => {
                     }}>
                        This is a collection of your past assignments!
                         </p>
+
+                        {volunteerSummary && (
+                            <div style={{
+                                backgroundColor: 'green',
+                                color: 'white',
+                                padding: '12px 20px',
+                                borderRadius: '8px',
+                                marginBottom: '20px',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                textAlign: 'center'
+                            }}>
+                                Total Hours Volunteered: {volunteerSummary.totalHours} hours | Total Days Volunteered: {volunteerSummary.totalDays} days | Total Events Volunteered: {volunteerSummary.totalEvents}
+                            </div>
+                        )}
+
+                        {volunteerSummary?.cancelledCount > 0 && (
+                            <div style={{
+                                backgroundColor: '#E74C3C', 
+                                color: 'white',
+                                padding: '12px 20px',
+                                borderRadius: '8px',
+                                marginBottom: '20px',
+                                fontSize: '1rem',
+                                fontWeight: '600',
+                                textAlign: 'center'
+                            }}>
+                                Cancelled Assignments: {volunteerSummary.cancelledCount}
+                            </div>
+                        )}
+
+
                     {renderTable(pastAssignments, 'Past Assignments')}
                 </>
             )}

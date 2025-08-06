@@ -5,9 +5,7 @@ const getVolunteerHistory = async (req, res) => {
     const userId = req.params.userId;
 
     try {
-
-
-        // get current/upcoming assignments (event end date in the future) (NOT IN USE)
+        // Upcoming assignments
         const [upcomingRows] = await db.query(
             `SELECT 
                 e.name AS event_name,
@@ -25,7 +23,7 @@ const getVolunteerHistory = async (req, res) => {
             [userId]
         );
 
-        // get past assignments (event end date in the past)
+        // Past assignments
         const [pastRows] = await db.query(
             `SELECT
                 e.name AS event_name,
@@ -40,15 +38,45 @@ const getVolunteerHistory = async (req, res) => {
             JOIN Events e ON ea.event_id = e.event_id
             WHERE ea.user_id = ?
                 AND DATE(e.end_datetime) <= CURDATE()
-                AND ea.status IN ('accepted', 'completed', 'cancelled')
+                AND ea.status IN ('cancelled', 'completed')
             ORDER BY e.start_datetime DESC`,
             [userId]
         );
 
+        // calc total hours and days
+        let totalHours = 0;
+        let totalEvents = 0;
+        const uniqueDates = new Set();
+
+        pastRows.forEach(row => {
+            if (row.status === 'cancelled') return;
+
+            const start = new Date(row.start_datetime);
+            const end = new Date(row.end_datetime);
+
+            const durationHours = (end - start) / (1000 * 60 * 60);
+            totalHours += durationHours;
+
+            uniqueDates.add(start.toDateString());
+            totalEvents += 1;
+        });
+
+        const totalDays = uniqueDates.size;
+
+        const cancelledCount = pastRows.filter(row => row.status === 'cancelled').length;
+
         res.status(200).json({
             upcoming: upcomingRows,
-            past: pastRows
+            past: pastRows,
+            summary: {
+                totalHours: Number(totalHours.toFixed(2)),
+                totalDays,
+                totalEvents,
+                cancelledCount
+            }
         });
+
+
     } catch (err) {
         console.error("Error fetching volunteer history:", err);
         res.status(500).json({ error: "Failed to fetch volunteer history" });
@@ -58,6 +86,7 @@ const getVolunteerHistory = async (req, res) => {
 module.exports = {
     getVolunteerHistory,
 };
+
 
 
 
