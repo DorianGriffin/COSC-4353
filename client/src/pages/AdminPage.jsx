@@ -1,15 +1,38 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './AdminPage.css'
 import { useNavigate } from 'react-router-dom';
+//when button is clicked, increase the number of notifications by 1. Message: "New notification received"
 
 const AdminPage = () => {
     const navigate = useNavigate();
-    
+    const [showCard, setShowCard] = useState(false);
+    const [showForm, setShowForm] = useState(false);
+    const [email, setEmail] = useState({
+            to: '',
+            subject: '',
+            message: '',
+        });
+
+    const handleToggle = () => {
+        setShowCard(!showCard);
+    };
     const handleLogout = () => {
         localStorage.removeItem('adminUser');
         navigate('/admin-login');
     };
-    
+    const handleChange = (e) => {
+        setEmail({
+         ...email,
+            [e.target.name]: e.target.value,
+            });
+     };
+    const handleSubmit = (e) => {
+                e.preventDefault();
+                // Example: You would send `email` to your backend here using fetch or axios
+                console.log('Sending email:', email);
+                alert('Email sent!');
+                setShowForm(false);
+            };
     // Get admin user data with fallback
     const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
     const adminUsername = adminUser.username || 'Admin';
@@ -39,6 +62,9 @@ const AdminPage = () => {
                     </div>
                     <button onClick={handleLogout} className="logout-btn" title="Logout">
                         <span className="btn-icon">🚪</span>
+                    </button>
+                     <button onClick={() => navigate('/notifications')} className="notification-btn" title="notifications">
+                        <span className="btn-icon">🔔</span>
                     </button>
                 </div>
             </nav>
@@ -99,6 +125,55 @@ const AdminPage = () => {
                             <span className="btn-icon">🔄</span>
                             Run Matching Algorithm
                         </button>
+                            <button className="quick-btn" onClick={() => setShowForm(!showForm)} style={{ padding: '10px 20px' }}>
+                                  <span className="btn-icon">✉️</span>
+                                {showForm ? 'Cancel' : 'Send Email'} </button>
+                                    {showForm && (
+                                        <form onSubmit={handleSubmit} style={{
+                                        marginTop: '20px',
+                                        border: '1px solid #ccc',
+                                        borderRadius: '10px',
+                                        padding: '20px',
+                                        maxWidth: '600px',
+                                        boxShadow: '0 4px 8px rgba(0,0,0,0.1)'
+                                        }}>
+                                        <div style={{ marginBottom: '10px' }}>
+                                            <label>To:</label><br />
+                                            <input
+                                            type="email"
+                                            name="to"
+                                            value={email.to}
+                                            onChange={handleChange}
+                                            required
+                                            style={{ width: '90%', padding: '8px' }}
+                                            />
+                                        </div>
+                                        <div style={{ marginBottom: '10px' }}>
+                                            <label>Subject:</label><br />
+                                            <input
+                                            type="text"
+                                            name="subject"
+                                            value={email.subject}
+                                            onChange={handleChange}
+                                            required
+                                            style={{ width: '90%', padding: '8px' }}
+                                            />
+                                        </div>
+                                        <div style={{ marginBottom: '10px' }}>
+                                            <label>Message:</label><br />
+                                            <textarea
+                                            name="message"
+                                            value={email.message}
+                                            onChange={handleChange}
+                                            required
+                                            rows="4"
+                                            style={{ width: '90%', padding: '8px' }}
+                                            ></textarea>
+                                        </div>
+                                        
+                                        <button type="submit" style={{ padding: '10px 20px' }}>Send</button>
+                                        </form>
+                            )}
                     </div>
                 </div>
             </div>

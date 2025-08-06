@@ -1,5 +1,3 @@
-
-
 const express = require('express');
 const router = express.Router();
 const matchingController = require('../controllers/matchingController');
@@ -9,8 +7,10 @@ const matchingController = require('../controllers/matchingController');
 
 router.get('/admin/matches', matchingController.getAllMatches);
 router.get('/match/:userId', matchingController.ismatched);
-// POST accept or cancel
+// POST accept, cancel and complete
 router.post('/events/:eventId/accept', matchingController.acceptEvent);
 router.post('/events/:eventId/cancel', matchingController.cancelEvent);
+router.post('/events/:eventId/complete', matchingController.markCompleted);
+
 
 module.exports = router;

@@ -7,7 +7,7 @@ const NotificationsPage = () => {
     const [notifications, setNotifications] = useState([]);
     const [loading, setLoading] = useState(true);
     const [hoveredRowId, setHoveredRowId] = useState(null);
-
+    const [showForm, setShowForm] = useState(false);
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const userId = storedUser?.user_id;
 
@@ -16,6 +16,17 @@ const NotificationsPage = () => {
     const handleGoToDashboard = () => {
         navigate('/volunteer-dashboard');
     };
+
+    const handleLogout = () => {
+        localStorage.removeItem('adminUser');
+        navigate('/admin-login');
+    };
+    // Get admin user data with fallback
+    const adminUser = JSON.parse(localStorage.getItem('adminUser') || '{}');
+    const adminUsername = adminUser.username || 'Admin';
+
+
+
     useEffect(() => {
         const originalBg = document.body.style.backgroundColor;
         document.body.style.backgroundColor = '#CCCCFF'; // Periwinkle page background
@@ -135,6 +146,7 @@ const NotificationsPage = () => {
     };
 
     return (
+
         <div style={containerStyle}>
             {userId && (
                 <div style={{ textAlign: 'right', marginBottom: '20px' }}>

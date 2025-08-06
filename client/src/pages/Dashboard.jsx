@@ -63,6 +63,19 @@ const Dashboard = () => {
             >
               My Profile
             </button>
+            <button
+              style={{
+                padding: "0.75rem 1.5rem",
+                backgroundColor: "#1e3a8a",
+                color: "white",
+                border: "none",
+                borderRadius: "8px",
+                cursor: "pointer",
+                fontWeight: "600",
+              }}
+            >
+              Message Volunteers
+            </button>
           </div>
         </div>
 
