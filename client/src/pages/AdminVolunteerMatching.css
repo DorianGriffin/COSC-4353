@@ -337,6 +337,24 @@
     background: #c82333;
   }
   
+  .button-clicked {
+    animation: clickPop 0.25s ease;
+  }
+  
+  @keyframes clickPop {
+    0% {
+      transform: scale(1);
+      background-color: #0056b3;
+    }
+    50% {
+      transform: scale(1.1);
+      background-color: #3399ff;
+    }
+    100% {
+      transform: scale(1);
+      background-color: #007bff;
+    }
+  }
   /* Responsive Design */
   @media (max-width: 768px) {
     .admin-navbar {
@@ -375,19 +393,10 @@
     font-size: 16px;
     border: none;
   }
-
+  
 h2{
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   }
-.matching-display-div{
-    border: 2px solid #000000;
-    border-radius: 15px;
-    padding: 20px;
-    margin: 20px;
-    background-color: #f9f9f9;
-    box-shadow: rgba(0, 0, 0, 0.1) 0px 2px 4px;
-  }
-
-
 }
-  
+
+
