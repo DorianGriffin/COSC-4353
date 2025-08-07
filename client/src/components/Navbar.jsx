@@ -126,32 +126,35 @@ const Navbar = () => {
               Welcome, {adminUser.username}
             </span>
             <button
-              onClick={() => navigate("/admin")}
-              style={{
-                backgroundColor: "#E91E63",
-                border: "none",
-                padding: "0.5rem 1rem",
-                borderRadius: "4px",
-                color: "white",
-                cursor: "pointer",
-                marginRight: "0.5rem",
-              }}
-            >
-              Admin Dashboard
-            </button>
-            <button
-              onClick={handleAdminLogout}
-              style={{
-                backgroundColor: "#9C27B0",
-                border: "none",
-                color: "white",
-                padding: "0.5rem 1rem",
-                borderRadius: "4px",
-                cursor: "pointer",
-              }}
-            >
-              Logout
-            </button>
+  onClick={() => navigate("/admin")}
+  style={{
+    backgroundColor: "transparent",
+    border: "2px solid white",
+    padding: "0.5rem 1rem",
+    borderRadius: "4px",
+    color: "white",
+    cursor: "pointer",
+    marginRight: "0.5rem",
+    fontWeight: "bold"
+  }}
+>
+  Admin Dashboard
+</button>
+<button
+  onClick={handleAdminLogout}
+  style={{
+    backgroundColor: "transparent",
+    border: "2px solid white",
+    color: "white",
+    padding: "0.5rem 1rem",
+    borderRadius: "4px",
+    cursor: "pointer",
+    fontWeight: "bold"
+  }}
+>
+  Logout
+</button>
+
           </>
         ) : user || hydratedUser ? (
           // Regular user is logged in

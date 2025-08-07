@@ -119,6 +119,23 @@ const AdminEventManagement = () => {
       setIsLoading(false);
       return;
     }
+    
+    // ✅ Check if start_datetime is in the future
+    const now = new Date();
+    const start = new Date(formData.start_datetime);
+    
+    if (isNaN(start.getTime())) {
+      setMessage("Invalid start date");
+      setIsLoading(false);
+      return;
+    }
+    
+    if (start < now) {
+      setMessage("Start date/time cannot be in the past");
+      setIsLoading(false);
+      return;
+    }
+    
 
     if (editingEvent) {
       updateEvent();

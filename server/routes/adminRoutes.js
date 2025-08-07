@@ -1,7 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const { createAdmin } = require('../controllers/adminController');
+const { createAdmin, deleteAdmin, listAdmins, loginAdmin } = require('../controllers/adminController');
 
-router.post('/create-admin', createAdmin); // Only super admins allowed
+router.post('/create-admin', createAdmin);
+router.post('/login', loginAdmin); 
+router.delete('/delete-admin/:adminId', deleteAdmin);
+router.get('/list', listAdmins);
 
 module.exports = router;

@@ -55,6 +55,7 @@
   "homepage": "https://github.com/DorianGriffin/COSC-4353#readme",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "date-fns": "^4.1.0",
     "express-session": "^1.18.2",
     "json2csv": "^6.0.0-alpha.2",
     "papaparse": "^5.5.3",

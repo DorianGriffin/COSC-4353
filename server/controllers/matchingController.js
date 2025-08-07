@@ -429,7 +429,3 @@ exports.downloadMatchesPDF = async (req, res) => {
     res.status(500).send('Error generating PDF');
   }
 };
-
-
-
-

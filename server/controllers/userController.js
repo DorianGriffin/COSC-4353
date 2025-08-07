@@ -58,16 +58,30 @@ const loginUser = async (req, res) => {
       [username, username]
     );
 
-    if (rows.length === 0)
+    if (rows.length === 0) {
       return res.status(401).json({ message: "Invalid credentials" });
-
+    }
+    
     const user = rows[0];
+    
+    // ❌ Block admins from logging in through this route
+    if (user.role === 'admin') {
+      return res.status(403).json({ message: "Admins must use the admin login page." });
+    }
+    
     const match = await bcrypt.compare(password, user.password_hash);
-
-    if (!match)
+    if (!match) {
       return res.status(401).json({ message: "Invalid credentials" });
-
-    req.session.user = { username: user.username };
+    }
+    
+    req.session.user = {
+      user_id: user.user_id,
+      username: user.username,
+      role: user.role,
+      is_super_admin: user.is_super_admin
+    };
+    
+    
 
     const { password_hash, ...userWithoutPassword } = user;
     res.status(200).json({ message: "Login successful", user: userWithoutPassword });

@@ -28,7 +28,7 @@ const AdminLogin = () => {
       const { username, password } = credentials;
   
       try {
-          const response = await fetch("http://localhost:8080/api/users/login", {
+        const response = await fetch("http://localhost:8080/api/admin/login", {
               method: "POST",
               credentials: "include",
               headers: {

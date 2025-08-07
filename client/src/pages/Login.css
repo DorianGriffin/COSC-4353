@@ -10,24 +10,29 @@
 
 .auth-background {
   display: flex;
+  flex-wrap: nowrap;         /* (or 'wrap' if you prefer stacking on smaller screens) */
   max-width: 1200px;
   width: 100%;
   background: white;
   border-radius: 20px;
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-  overflow: hidden;
+  overflow: hidden;          /* Ensures nothing leaks out visually */
   min-height: 600px;
 }
 
+
 .auth-card {
-  flex: 1;
+  flex: 1 1 50%;        /* Allow it to grow, but max out at half */
+  max-width: 500px;     /* Prevents overflowing into the side */
+  min-width: 0;         /* Fixes content overflow in flexbox */
   padding: 3rem;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  max-width: 500px;
   position: relative;
+  box-sizing: border-box;
 }
+
 
 .register-card {
   max-width: 600px;
