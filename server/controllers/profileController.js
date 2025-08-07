@@ -37,11 +37,6 @@ function validateProfile(data, isNewProfile = true) {
     if (availability !== undefined && availability.length > 0) {
       if (!Array.isArray(availability) || availability.some(d => !d)) 
         return "Invalid availability format.";
-
-    const today = new Date().toISOString().split("T")[0];
-    const hasPastDate = availability.some(d => normalizeDate(d) < today);
-    if (hasPastDate)
-      return "Availability cannot include past dates.";
     }
   }
 
@@ -248,5 +243,6 @@ module.exports = {
   getProfile,
   getLoggedInProfile,
 };
+
 
 
