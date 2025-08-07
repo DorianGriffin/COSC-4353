@@ -23,9 +23,9 @@ const getVolunteerHistory = async (req, res) => {
             [userId]
         );
 
-        // Past assignments
+        // Past assignments + all marked completed
         const [pastRows] = await db.query(
-            `SELECT
+                    `SELECT
                 e.name AS event_name,
                 e.description,
                 CONCAT(e.City, ', ', e.State) AS location,
@@ -37,11 +37,14 @@ const getVolunteerHistory = async (req, res) => {
             FROM EventAssignments ea
             JOIN Events e ON ea.event_id = e.event_id
             WHERE ea.user_id = ?
-                AND DATE(e.end_datetime) <= CURDATE()
-                AND ea.status IN ('cancelled', 'completed')
+                AND (
+                    ea.status = 'completed'
+                    OR (ea.status = 'cancelled' AND DATE(e.end_datetime) <= CURDATE())
+                )
             ORDER BY e.start_datetime DESC`,
-            [userId]
+                    [userId]
         );
+
 
         // calc total hours and days
         let totalHours = 0;

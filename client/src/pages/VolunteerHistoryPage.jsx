@@ -216,7 +216,7 @@ const VolunteerHistoryPage = () => {
                         textAlign: 'center',
                         marginBottom: '20px'
                     }}>
-                       This is a collection of your past assignments!
+                       This is a collection of your past and completed assignments!
                         </p>
 
                         {volunteerSummary && (
@@ -250,7 +250,7 @@ const VolunteerHistoryPage = () => {
                         )}
 
 
-                    {renderTable(pastAssignments, 'Past Assignments')}
+                    {renderTable(pastAssignments, 'Past and Completed Assignments')}
                 </>
             )}
 
