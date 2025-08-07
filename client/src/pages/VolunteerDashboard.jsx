@@ -2,6 +2,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import heroImage from './assets/hero.png';
+import { format } from 'date-fns';
+
 
 const skillMap = {
   1: "First Aid", 2: "Communication", 3: "CPR", 4: "Leadership", 5: "Organization",
@@ -93,7 +95,6 @@ const VolunteerDashboard = () => {
     if (confirmAction === 'markComplete') {
       handleMarkComplete(confirmEventId);
     } else {
-      // Simulate currentStatus based on action
       const simulatedCurrentStatus = confirmAction === 'accept' ? 'cancelled' : 'assigned';
       handleAcceptOrCancel(confirmEventId, simulatedCurrentStatus);
     }
@@ -206,11 +207,39 @@ const VolunteerDashboard = () => {
             }}
           >
             <p><strong>Availability:</strong></p>
-            <ul>
-              {user.availability.length > 0
-                ? user.availability.map((date, idx) => <li key={idx}>{date}</li>)
-                : <li>No availability set</li>}
-            </ul>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(4, 1fr)',
+              gap: '0.5rem',
+              marginTop: '0.5rem',
+              fontSize: '0.85rem'
+            }}>
+              {user.availability.length > 0 ? (
+                user.availability
+                  .filter(date => new Date(date) >= new Date().setHours(0, 0, 0, 0))
+                  .map((dateStr, idx) => {
+                    const formatted = format(new Date(dateStr), 'MMM d, yyyy');
+                  return (
+                    <div key={idx} style={{
+                      height: '50px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      backgroundColor: '#6a0dad',
+                      borderRadius: '10px',
+                      textAlign: 'center',
+                      color: '#fff',
+                      fontWeight: 500,
+                      minWidth: '50px'
+                    }}>
+                      {formatted}
+                    </div>
+                  );
+                })
+            ) : (
+              <div style={{ gridColumn: 'span 4', textAlign: 'center' }}>No availability set</div>
+            )}
+          </div>
             <hr />
             <p onClick={() => handleNavigate('/notifications')} style={{ cursor: 'pointer', color: '#dc3545' }}>Notification</p>
             <p onClick={() => handleNavigate('/profile')} style={{ cursor: 'pointer', color: '#dc3545' }}>Edit Profile</p>
@@ -237,11 +266,11 @@ const VolunteerDashboard = () => {
         {events.length > 0 && (
           <div style={{ marginTop: '2rem', display: 'flex', justifyContent: 'flex-end' }}>
             <div style={{ display: 'flex', gap: '2rem' }}>
-              <div style={{ background: '#f0e7ff', padding: '1rem', borderRadius: '8px' }}>
+              <div style={{ background: '#b388eb', padding: '1rem', borderRadius: '8px' }}>
                 <h2>Next Event</h2>
                 <p><strong>{nextEvent.name}</strong> — {new Date(nextEvent.start_datetime).toLocaleDateString()}</p>
               </div>
-              <div style={{ background: '#f0e7ff', padding: '1rem', borderRadius: '8px' }}>
+              <div style={{ background: '#b388eb', padding: '1rem', borderRadius: '8px' }}>
                 <h2>Most Urgent Event</h2>
                 <p><strong>{mostUrgentEvent.name}</strong> — {mostUrgentEvent.urgency_level}</p>
               </div>
@@ -333,5 +362,6 @@ const btnStyle = (bg) => ({
 });
 
 export default VolunteerDashboard;
+
 
 
