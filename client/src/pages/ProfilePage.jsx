@@ -140,18 +140,19 @@ const ProfilePage = () => {
       {children} <span style={{ color: "red" }}>*</span>
     </label>
   );
+    return (
+  <div className="auth-container">
+    <div className="auth-background">
+      <div className="auth-card register-card">
+        <button className="back-home-button" onClick={() => navigate("/")}>← Back to Home</button>
+        <div className="auth-header">
+          <div className="logo">VolunteerApp</div>
+          <h1 className="auth-title">Complete Your Profile</h1>
+          <p className="auth-subtitle">This form shows once, to set up your preferences.</p>
+        </div>
 
-  return (
-    <div className="auth-container">
-      <div className="auth-background">
-        <div className="auth-card register-card">
-          <button className="back-home-button" onClick={() => navigate("/")}>← Back to Home</button>
-          <div className="auth-header">
-            <div className="logo">VolunteerApp</div>
-            <h1 className="auth-title">Complete Your Profile</h1>
-            <p className="auth-subtitle">This form shows once, to set up your preferences.</p>
-          </div>
-
+       
+        <div className="form-wrapper">
           <form onSubmit={handleSubmit} className="auth-form">
             <div className="form-group">
               <RequiredLabel>Full Name</RequiredLabel>
@@ -185,7 +186,6 @@ const ProfilePage = () => {
               <input name="zip" value={formData.zip} onChange={handleChange} maxLength={9} className="form-input" />
             </div>
 
-            
             <div className="form-group">
               <RequiredLabel>Skills (multiple select)</RequiredLabel>
               <div className="custom-multiselect">
@@ -237,7 +237,19 @@ const ProfilePage = () => {
                 onChange={handleDateChange}
                 format="MMM D, YYYY"
                 className="form-input"
-                minDate={new Date()} 
+                minDate={new Date()}
+                render={(value, openCalendar) => (
+                  <input
+                    readOnly
+                    onClick={openCalendar}
+                    className="form-input"
+                    value={
+                      Array.isArray(formData.availability) && formData.availability.length > 0
+                        ? "Selected dates"
+                        : "Choose availability"
+                    }
+                  />
+                )}
               />
             </div>
             <button type="submit" disabled={isSaving} className="auth-button">
@@ -250,41 +262,44 @@ const ProfilePage = () => {
             )}
           </form>
         </div>
+      </div>
 
-        <div className="auth-side-panel">
-          <div className="side-content">
-            <h2>Make an Impact</h2>
-            <p>Join thousands of volunteers making a difference worldwide.</p>
-            <div className="features">
-              <div className="feature">
-                <div className="feature-icon">🤝</div>
-                <div>
-                  <h3>Connect</h3>
-                  <p>Find opportunities that match your passion</p>
-                </div>
+      <div className="auth-side-panel">
+        <div className="side-content">
+          <h2>Make an Impact</h2>
+          <p>Join thousands of volunteers making a difference worldwide.</p>
+          <div className="features">
+            <div className="feature">
+              <div className="feature-icon">🤝</div>
+              <div>
+                <h3>Connect</h3>
+                <p>Find opportunities that match your passion</p>
               </div>
-              <div className="feature">
-                <div className="feature-icon">🌍</div>
-                <div>
-                  <h3>Impact</h3>
-                  <p>Make a difference locally and globally</p>
-                </div>
+            </div>
+            <div className="feature">
+              <div className="feature-icon">🌍</div>
+              <div>
+                <h3>Impact</h3>
+                <p>Make a difference locally and globally</p>
               </div>
-              <div className="feature">
-                <div className="feature-icon">📈</div>
-                <div>
-                  <h3>Grow</h3>
-                  <p>Develop skills while helping others</p>
-                </div>
+            </div>
+            <div className="feature">
+              <div className="feature-icon">📈</div>
+              <div>
+                <h3>Grow</h3>
+                <p>Develop skills while helping others</p>
               </div>
             </div>
           </div>
         </div>
-
       </div>
+
     </div>
-  );
+  </div>
+);
+
 };
 
 export default ProfilePage;
+
 
