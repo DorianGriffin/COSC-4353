@@ -35,7 +35,7 @@ const VolunteerHistoryPage = () => {
                             <th style={thStyle}>Location</th>
                             <th style={thStyle}>Required Skills</th>
                             <th style={thStyle}>Urgency</th>
-                            <th style={thStyle}>Date</th>
+                            <th style={thStyle}>End Date</th>
                             <th style={thStyle}>Status</th>
                         </tr>
                     </thead>
@@ -250,7 +250,7 @@ const VolunteerHistoryPage = () => {
                         )}
 
 
-                    {renderTable(pastAssignments, 'Past and Completed Assignments')}
+                    {renderTable(pastAssignments, '')}
                 </>
             )}
 
