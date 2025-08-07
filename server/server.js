@@ -96,6 +96,7 @@ try {
   app.use("/api/matching", matchingRouter);
   app.use("/api/volunteerHistoryReport", volunteerHistoryReport);
   app.use("/api/admin", adminRoutes);
+
   
   console.log(" All routes registered successfully");
 
@@ -121,6 +122,46 @@ app.get("/health", (req, res) => {
 db.query("SELECT 1")
   .then(() => console.log(" Database connection successful"))
   .catch((err) => console.error("Database connection failed:", err.message));
+
+
+// === DAILY NOTIFICATION REMINDER === //
+const { generateDailyEventNotifications } = require('./controllers/NotifUserEventWithinXDays');
+
+function scheduleNotificationJob(hour = 6) {
+    // run immediately on server start
+    console.log("Running notification job at startup...");
+    generateDailyEventNotifications();
+
+    // interval to run every 3 minutes
+    setInterval(() => {
+        generateDailyEventNotifications();
+    }, 3 * 60 * 1000);
+
+    // daily run at 6 AM
+    const now = new Date();
+    const firstRun = new Date();
+    firstRun.setHours(hour, 0, 0, 0);
+
+    if (firstRun < now) {
+        firstRun.setDate(firstRun.getDate() + 1); // next day
+    }
+
+    const delay = firstRun - now;
+
+    console.log(`Daily notification job scheduled in ${Math.round(delay / 1000 / 60)} minutes`);
+
+    setTimeout(() => {
+        generateDailyEventNotifications(); // run once at scheduled time
+
+        // then continue running every 24 hours at this time
+        setInterval(() => {
+            generateDailyEventNotifications();
+        }, 24 * 60 * 60 * 1000); // every 24 hours
+    }, delay);
+}
+
+scheduleNotificationJob();
+
 
 // START SERVER
 const PORT = 8080;
