@@ -8,6 +8,9 @@ const NotificationsPage = () => {
     const [loading, setLoading] = useState(true);
     const [hoveredRowId, setHoveredRowId] = useState(null);
     const [showForm, setShowForm] = useState(false);
+    const [selectedNotification, setSelectedNotification] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
+
     const storedUser = JSON.parse(localStorage.getItem("user"));
     const userId = storedUser?.user_id;
 
@@ -145,6 +148,16 @@ const NotificationsPage = () => {
         }
     };
 
+    const openModal = (notification) => {
+        setSelectedNotification(notification);
+        setModalVisible(true);
+    };
+
+    const closeModal = () => {
+        setModalVisible(false);
+        setSelectedNotification(null);
+    };
+
     return (
 
         <div style={containerStyle}>
@@ -195,7 +208,29 @@ const NotificationsPage = () => {
                                     onMouseLeave={() => setHoveredRowId(null)}
                                 >
                                     <td style={{ ...thTdStyle, ...messageCellStyle }}>
-                                        {n.message}
+                                        {n.message.length > 30 ? (
+                                            <>
+                                                {n.message.slice(0, 30)}...
+                                                <button
+                                                    onClick={() => openModal(n)}
+                                                    style={{
+                                                        marginLeft: '12px',
+                                                        padding: '4px 8px',
+                                                        fontSize: '0.75rem',
+                                                        backgroundColor: colors.mediumPurple,
+                                                        color: 'white',
+                                                        border: 'none',
+                                                        borderRadius: '6px',
+                                                        cursor: 'pointer',
+                                                    }}
+                                                >
+                                                    See More
+                                                </button>
+                                            </>
+                                        ) : (
+                                            n.message
+                                        )}
+
                                         {!n.read_status && (
                                             <button
                                                 onClick={() => handleMarkAsRead(n.notification_id)}
@@ -214,6 +249,7 @@ const NotificationsPage = () => {
                                             </button>
                                         )}
                                     </td>
+
                                     <td style={{ ...thTdStyle, ...dateTimeCellStyle }}>{dateString}</td>
                                     <td style={{ ...thTdStyle, ...dateTimeCellStyle }}>{timeString}</td>
                                 </tr>
@@ -221,6 +257,47 @@ const NotificationsPage = () => {
                         })}
                     </tbody>
                 </table>
+            )}
+
+            {modalVisible && (
+                <div style={{
+                    position: 'fixed',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    zIndex: 1000,
+                }}>
+                    <div style={{
+                        background: 'white',
+                        padding: '20px',
+                        borderRadius: '8px',
+                        maxWidth: '600px',
+                        width: '90%',
+                        textAlign: 'center',
+                    }}>
+                        <h3>Full Message</h3>
+                        <p>{selectedNotification?.message}</p>
+                        <button
+                            onClick={closeModal}
+                            style={{
+                                padding: '8px 16px',
+                                backgroundColor: colors.mediumPurple,
+                                color: 'white',
+                                border: 'none',
+                                borderRadius: '6px',
+                                cursor: 'pointer',
+                                marginTop: '10px',
+                            }}
+                        >
+                            Close
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
