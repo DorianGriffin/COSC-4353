@@ -8,6 +8,8 @@ router.get('/match/:userId', matchingController.ismatched);
 router.post('/events/:eventId/accept', matchingController.acceptEvent);
 router.post('/events/:eventId/cancel', matchingController.cancelEvent);
 router.post('/events/:eventId/complete', matchingController.markCompleted);
+router.get('/admin/matches/download/csv', matchingController.downloadMatchesCSV);
+router.get('/admin/matches/download/pdf', matchingController.downloadMatchesPDF);
 
 
 module.exports = router;
