@@ -45,6 +45,15 @@ const AdminVolunteerMatching = () => {
     fetchMatches(); // reset to default fetch
   };
 
+  const downloadReport = (type) => {
+    const queryObj = { ...filters };
+    if (sortBy) queryObj.sortBy = sortBy;
+    const query = '?' + new URLSearchParams(queryObj).toString();
+
+    const url = `http://localhost:8080/api/matching/admin/matches/download/${type}${query}`;
+    window.open(url, '_blank');
+  };
+
   useEffect(() => {
     fetchMatches();
   }, []);
@@ -124,6 +133,22 @@ const AdminVolunteerMatching = () => {
           </button>
         </div>
 
+        {/* Download Buttons */}
+        <div style={{ display: 'flex', gap: '1rem', marginBottom: '1.5rem' }}>
+          <button
+            style={{ ...styles.filterBtn, backgroundColor: '#28a745' }}
+            onClick={() => downloadReport('csv')}
+          >
+             Download CSV
+          </button>
+          <button
+            style={{ ...styles.filterBtn, backgroundColor: '#dc3545' }}
+            onClick={() => downloadReport('pdf')}
+          >
+             Download PDF
+          </button>
+        </div>
+
         {error && <p style={{ color: 'red' }}>{error}</p>}
 
         {matches.length > 0 ? (
@@ -200,4 +225,3 @@ const styles = {
 };
 
 export default AdminVolunteerMatching;
-
