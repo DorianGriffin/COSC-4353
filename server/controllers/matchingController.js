@@ -1,4 +1,7 @@
 const db = require('../models/db');
+const { Parser } = require('json2csv');
+const PDFDocument = require('pdfkit');
+
 const STATUS_ENUM = ['assigned', 'accepted', 'cancelled', 'completed'];
 
 //  GET matched events for one user
@@ -61,7 +64,7 @@ exports.ismatched = async (req, res) => {
         const currentStatus = eventStatusMap[event.event_id] || null;
 
         // Automatically mark past assigned events as completed
-        if (currentStatus === 'assigned' && endDate < now) {
+        if (currentStatus === 'accepted' && endDate < now) {
           await db.query(
             `UPDATE eventassignments SET status = 'completed' WHERE event_id = ? AND user_id = ?`,
             [event.event_id, userId]
@@ -76,12 +79,9 @@ exports.ismatched = async (req, res) => {
           );
           matchedEvents.push({ ...event, status: 'assigned' });
         } else if (currentStatus !== 'completed') {
-            // If cancelled, check if event is past due
             if (currentStatus === 'cancelled' && endDate < now) {
-            // Don't show it in dashboard if past due
               continue;
             }
-
             matchedEvents.push({ ...event, status: currentStatus });
         }
       }
@@ -235,7 +235,6 @@ exports.getAllMatches = async (req, res) => {
         [City, State]
       );
 
-      // Apply filters to events
       if (city) {
         events = events.filter(ev =>
           ev.City.toLowerCase().includes(city.toLowerCase())
@@ -271,7 +270,7 @@ exports.getAllMatches = async (req, res) => {
             `SELECT status FROM eventassignments WHERE event_id = ? AND user_id = ?`,
             [event.event_id, user_id]
           );
-          if (!statusRows.length) continue; // skip unassigned
+          if (!statusRows.length) continue;
 
           const status = statusRows[0].status;
 
@@ -288,7 +287,6 @@ exports.getAllMatches = async (req, res) => {
       }
     }
 
-    // Sort if requested
     if (sortBy === 'date') {
       allMatches.sort((a, b) => new Date(a.eventDate) - new Date(b.eventDate));
     } else if (sortBy === 'urgency') {
@@ -307,4 +305,131 @@ exports.getAllMatches = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
+
+
+const fetchMatchesForExport = async (query) => {
+  return new Promise((resolve, reject) => {
+    const mockReq = { query };
+    const mockRes = {
+      status: (code) => ({
+        json: (data) => {
+          if (code === 200) resolve(data.matches);
+          else reject(data);
+        },
+      }),
+    };
+    exports.getAllMatches(mockReq, mockRes).catch(reject);
+  });
+};
+
+// Admin: Download as CSV
+exports.downloadMatchesCSV = async (req, res) => {
+  try {
+    const matches = await fetchMatchesForExport(req.query);
+    const fields = [
+      { label: 'Volunteer Name', value: 'userName' },
+      { label: 'Event Name', value: 'eventName' },
+      { label: 'Event Date', value: 'eventDate' },
+      { label: 'Event Description', value: 'eventDescription' },
+      { label: 'Event Location', value: 'eventLocation' },
+      { label: 'Status', value: 'status' },
+      { label: 'Urgency Level', value: 'urgency_level' }
+    ];
+    const parser = new Parser({ fields });
+    const csv = parser.parse(matches);
+
+    res.header('Content-Type', 'text/csv');
+    res.attachment('volunteer_matches_report.csv');
+    res.send(csv);
+  } catch (error) {
+    console.error('CSV download error:', error);
+    res.status(500).send('Error generating CSV');
+  }
+};
+
+exports.downloadMatchesPDF = async (req, res) => {
+  try {
+    const matches = await fetchMatchesForExport(req.query);
+    const doc = new PDFDocument({ margin: 30, size: 'A4', layout: 'landscape' });
+
+    res.setHeader('Content-Disposition', 'attachment; filename=volunteer_matches_report.pdf');
+    res.setHeader('Content-Type', 'application/pdf');
+    doc.pipe(res);
+
+    
+    doc.fontSize(18).text('Volunteer Event Matches Report', { align: 'center' });
+    doc.moveDown(1.5);
+
+    
+    const headers = ['#', 'Volunteer', 'Event', 'Date', 'Location', 'Status', 'Urgency', 'Description'];
+    const columnWidths = [25, 80, 90, 60, 100, 60, 60, 180]; 
+    const startX = doc.x;
+    let y = doc.y;
+
+    doc.font('Helvetica-Bold').fontSize(10);
+
+    headers.forEach((header, i) => {
+      const x = startX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
+      doc.rect(x, y, columnWidths[i], 30).stroke();
+      doc.text(header, x + 4, y + 8, {
+        width: columnWidths[i] - 8,
+        align: 'left',
+        continued: false
+      });
+    });
+
+    y += 30;
+    doc.font('Helvetica').fontSize(9);
+
+    matches.forEach((match, index) => {
+      const row = [
+        index + 1,
+        match.userName,
+        match.eventName,
+        match.eventDate,
+        match.eventLocation,
+        match.status,
+        match.urgency_level,
+        match.eventDescription || ''
+      ];
+
+      let rowHeight = 30;
+
+      
+      row.forEach((text, i) => {
+        const textHeight = doc.heightOfString(String(text), {
+          width: columnWidths[i] - 8,
+          align: 'left'
+        });
+        rowHeight = Math.max(rowHeight, textHeight + 10); 
+      });
+
+      
+      if (y + rowHeight > doc.page.height - 40) {
+        doc.addPage({ size: 'A4', layout: 'landscape' });
+        y = doc.y;
+      }
+
+      
+      row.forEach((cell, i) => {
+        const x = startX + columnWidths.slice(0, i).reduce((a, b) => a + b, 0);
+        doc.rect(x, y, columnWidths[i], rowHeight).stroke();
+        doc.text(String(cell), x + 4, y + 5, {
+          width: columnWidths[i] - 8,
+          align: 'left'
+        });
+      });
+
+      y += rowHeight;
+    });
+
+    doc.end();
+  } catch (error) {
+    console.error('PDF download error:', error);
+    res.status(500).send('Error generating PDF');
+  }
+};
+
+
+
 
