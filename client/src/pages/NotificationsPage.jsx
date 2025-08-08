@@ -195,9 +195,10 @@ const NotificationsPage = () => {
                     </thead>
                     <tbody>
                         {notifications.map((n) => {
-                            const createdAt = new Date(n.created_at);
-                            const dateString = createdAt.toLocaleDateString();
-                            const timeString = createdAt.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            const createdAtUTC = new Date(n.created_at);
+                            const createdAtCDT = new Date(createdAtUTC.getTime() - 5 * 60 * 60 * 1000); // subtract 5 hours for CDT
+                            const dateString = createdAtCDT.toLocaleDateString();
+                            const timeString = createdAtCDT.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false }); // 24-hour format
                             const isHovered = hoveredRowId === n.notification_id;
 
                             return (
