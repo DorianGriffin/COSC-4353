@@ -52,7 +52,7 @@ const ProfilePage = () => {
           credentials: "include",
         });
         const data = await res.json();
-        if (data.success) {
+          if (data.success && data.profile) {
           setFormData(prev => ({
             ...prev,
             fullName: data.profile.fullName || "",
@@ -65,6 +65,9 @@ const ProfilePage = () => {
             skills: data.skills?.map(s => s.skill_id) || [],
             availability: data.availability?.map(d => new Date(d)) || [],
           }));
+          
+        } else {
+            console.warn("No existing profile data found.");
         }
       } catch (err) {
         console.error("Failed to fetch existing profile", err);
