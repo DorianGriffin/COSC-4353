@@ -1,6 +1,7 @@
 const db = require('../models/db');
 const { Parser } = require('json2csv');
 const PDFDocument = require('pdfkit');
+const { createNotificationIfNotExists } = require('./notificationsController');
 
 const STATUS_ENUM = ['assigned', 'accepted', 'cancelled', 'completed'];
 
@@ -77,12 +78,22 @@ exports.ismatched = async (req, res) => {
             `INSERT INTO eventassignments (event_id, user_id, assigned_at, status) VALUES (?, ?, NOW(), 'assigned')`,
             [event.event_id, userId]
           );
+          await createNotificationIfNotExists({
+            userId,
+            message: `You've been assigned to "${event.name}" on ${eventDate}.`
+          });
           matchedEvents.push({ ...event, status: 'assigned' });
         } else if (currentStatus !== 'completed') {
             if (currentStatus === 'cancelled' && endDate < now) {
               continue;
             }
+            await createNotificationIfNotExists({
+              userId,
+              message: `Reminder: You are assigned to "${event.name}" on ${eventDate}.`
+            });
+            
             matchedEvents.push({ ...event, status: currentStatus });
+            
         }
       }
     }

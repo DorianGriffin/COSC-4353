@@ -38,10 +38,31 @@ const markAsRead = async (req, res) => {
     }
 };
 
+// Prevent duplicate notifications for the same message on the same day
+const createNotificationIfNotExists = async ({ userId, message }) => {
+    try {
+        const [existing] = await db.query(
+            `SELECT 1 FROM Notifications WHERE user_id = ? AND message = ? AND DATE(created_at) = CURDATE()`,
+            [userId, message]
+        );
 
+        if (existing.length === 0) {
+            await db.query(
+                `INSERT INTO Notifications (user_id, message) VALUES (?, ?)`,
+                [userId, message]
+            );
+            console.log(`✅ Notification created for user ${userId}`);
+        } else {
+            console.log(`⚠️ Skipping duplicate notification for user ${userId}`);
+        }
+    } catch (err) {
+        console.error('❌ Notification insert failed:', err);
+    }
+};
 module.exports = {
     getUserNotifications,
     markAsRead,
+    createNotificationIfNotExists
 };
 
 
