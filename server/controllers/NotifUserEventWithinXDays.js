@@ -1,16 +1,10 @@
 const db = require('../models/db');
 
-/**
- * daily notification generator for event assignments
- *  - check all events happening in the next 3 days
- *  - find users who are assigned and not cancelled OR completed
- *  - avoid duplicate notifications
- *  - insert a message into Notifications table
- *  - checks every 3 minutes, everytime server starts, everyday at 6 AM
- */
-
 const generateDailyEventNotifications = async () => {
     try {
+        const now = new Date();
+        const twelveHoursFromNow = new Date(now.getTime() + 12 * 60 * 60 * 1000);
+
         const [assignments] = await db.query(`
             SELECT 
                 ea.user_id,
@@ -20,27 +14,20 @@ const generateDailyEventNotifications = async () => {
             FROM EventAssignments ea
             JOIN Events e ON e.event_id = ea.event_id
             WHERE ea.status NOT IN ('cancelled', 'completed')
-              AND DATE(e.start_datetime) BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 3 DAY)
-        `);
-
-        const today = new Date();
-
-        // 0 time part for accurate date diff
-        today.setHours(0, 0, 0, 0);
+              AND e.start_datetime BETWEEN ? AND ?
+        `, [now.toISOString(), twelveHoursFromNow.toISOString()]);
 
         for (const a of assignments) {
             const eventDate = new Date(a.start_datetime);
-            eventDate.setHours(0, 0, 0, 0);
+            const formattedDate = eventDate.toISOString().split('T')[0]; // YYYY-MM-DD
 
-            const diffTime = eventDate.getTime() - today.getTime();
-            const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+            const message = `The ${a.event_name} event on ${formattedDate} is starting soon!`;
 
-            const message = `Reminder: You are assigned to "${a.event_name}" on ${eventDate.toLocaleDateString()}. That's in ${diffDays} day${diffDays !== 1 ? 's' : ''}!`;
-
-            // check if notification already exists for today
+            // duplicate check anywhere in Notifications table
             const [existing] = await db.query(`
                 SELECT 1 FROM Notifications
-                WHERE user_id = ? AND message = ? AND DATE(created_at) = CURDATE()
+                WHERE user_id = ? AND message = ?
+                LIMIT 1
             `, [a.user_id, message]);
 
             if (existing.length === 0) {
@@ -49,18 +36,18 @@ const generateDailyEventNotifications = async () => {
                     VALUES (?, ?)
                 `, [a.user_id, message]);
 
-                console.log(`Notification added for user ${a.user_id} - ${a.event_name}`);
+                console.log(`? Notification added for user ${a.user_id} - ${a.event_name}`);
             } else {
-                console.log(`Skipping duplicate notification for user ${a.user_id} - ${a.event_name}`);
+                console.log(`? Skipped duplicate for user ${a.user_id} - "${a.event_name}"`);
             }
         }
 
-        console.log(`[${new Date().toISOString()}] Daily event notifications check completed.`);
+        console.log(`[${new Date().toISOString()}] 12-hour notification check completed.`);
     } catch (err) {
-        console.error("Error generating daily event notifications:", err);
+        console.error("Error generating 12-hour notifications:", err);
     }
 };
 
 module.exports = {
-    generateDailyEventNotifications
+    generateDailyEventNotifications,
 };
