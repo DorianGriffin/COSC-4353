@@ -3,7 +3,7 @@ const db = require('../models/db');
 const generateDailyEventNotifications = async () => {
     try {
         const now = new Date();
-        const twelveHoursFromNow = new Date(now.getTime() + 12 * 60 * 60 * 1000);
+        const twelveHoursFromNow = new Date(now.getTime() + 24 * 60 * 60 * 1000);
 
         const [assignments] = await db.query(`
             SELECT 
@@ -36,15 +36,15 @@ const generateDailyEventNotifications = async () => {
                     VALUES (?, ?)
                 `, [a.user_id, message]);
 
-                console.log(`? Notification added for user ${a.user_id} - ${a.event_name}`);
+                console.log(`daily check -Notification added for user ${a.user_id} - ${a.event_name}`);
             } else {
-                console.log(`? Skipped duplicate for user ${a.user_id} - "${a.event_name}"`);
+                console.log(`daily check -Skipped duplicate for user ${a.user_id} - "${a.event_name}"`);
             }
         }
 
-        console.log(`[${new Date().toISOString()}] 12-hour notification check completed.`);
+        console.log(`[${new Date().toISOString()}] 24-hour notification check completed.`);
     } catch (err) {
-        console.error("Error generating 12-hour notifications:", err);
+        console.error("Error generating 24-hour notifications:", err);
     }
 };
 
