@@ -83,7 +83,11 @@ try {
 
   console.log("5. Loading volunteerHistoryReport...");
   const volunteerHistoryReport = require("./routes/volunteerHistoryReport");
-  console.log("   ✓ volunteerHistoryReport loaded successfully");
+    console.log("   ✓ volunteerHistoryReport loaded successfully");
+
+    console.log("5. Loading manualmessaging...");
+    const manualmessaging = require("./routes/manualmessageroutes");
+    console.log("   ✓ manualmessaging loaded successfully");
 
 
   const adminRoutes = require("./routes/adminRoutes");
@@ -95,7 +99,9 @@ try {
   app.use("/api/volunteer-history", volunteerHistoryRouter);
   app.use("/api/matching", matchingRouter);
   app.use("/api/volunteerHistoryReport", volunteerHistoryReport);
-  app.use("/api/admin", adminRoutes);
+    app.use("/api/admin", adminRoutes);
+    app.use('/api/event-messages', manualmessaging);
+
 
   
   console.log(" All routes registered successfully");

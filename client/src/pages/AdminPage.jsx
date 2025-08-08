@@ -5,6 +5,7 @@ import VolunteerReportDownload from './VolunteerReportDownload.jsx';
 
 const AdminPage = () => {
     const navigate = useNavigate();
+
     const [showCard, setShowCard] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [showAdminList, setShowAdminList] = useState(false);
@@ -17,9 +18,37 @@ const AdminPage = () => {
         message: '',
     });
 
+
+    const [eventMessage, setEventMessage] = useState('');
+    const [eventList, setEventList] = useState([]);
+    const [selectedEventId, setSelectedEventId] = useState('');
+    const [eventMessageStatus, setEventMessageStatus] = useState('');
+
+    useEffect(() => {
+        const fetchEventList = async () => {
+            try {
+                const response = await fetch('http://localhost:8080/api/event-messages/available-events');
+                const data = await response.json();
+                if (response.ok) {
+                    setEventList(data || []);
+                } else {
+                    setEventMessageStatus('Failed to load events');
+                }
+            } catch (error) {
+                console.error('Error fetching events:', error);
+                setEventMessageStatus('Failed to load events');
+            }
+        };
+
+        fetchEventList();
+    }, []);
+
+
     const handleToggle = () => {
         setShowCard(!showCard);
     };
+
+
 
     const handleLogout = () => {
         localStorage.removeItem('adminUser');
@@ -40,6 +69,41 @@ const AdminPage = () => {
         alert('Email sent!');
         setShowForm(false);
     };
+
+    const handleSendEventMessage = async (e) => {
+        e.preventDefault();
+
+        if (!selectedEventId || !eventMessage.trim()) {
+            setEventMessageStatus('Please select an event and write a message.');
+            return;
+        }
+
+        try {
+            const response = await fetch('http://localhost:8080/api/event-messages/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    event_id: selectedEventId,
+                    message: eventMessage,
+                }),
+            });
+
+            const data = await response.json();
+            if (response.ok) {
+                setEventMessageStatus('Message sent successfully!');
+                setEventMessage('');
+                setSelectedEventId('');
+            } else {
+                setEventMessageStatus(data.message || 'Failed to send message');
+            }
+        } catch (error) {
+            console.error('Error sending event message:', error);
+            setEventMessageStatus('An error occurred while sending the message');
+        }
+    };
+
 
     // Fetch all admins
     const fetchAdmins = async () => {
@@ -308,10 +372,61 @@ const AdminPage = () => {
                             <span className="btn-icon">🔄</span>
                             Run Matching Algorithm
                         </button>
-                        <button className="quick-btn" onClick={() => setShowForm(!showForm)} style={{ padding: '10px 20px' }}>
-                            <span className="btn-icon">✉️</span>
-                            {showForm ? 'Cancel' : 'Send Email'}
-                        </button>
+                        <div className="event-messaging-box" style={{
+                            marginTop: '30px',
+                            padding: '20px',
+                            border: '1px solid #ccc',
+                            borderRadius: '10px',
+                            backgroundColor: '#f9f9f9',
+                            maxWidth: '600px'
+                        }}>
+                            <h3 style={{ marginBottom: '15px' }}>📢 Message Assigned Users</h3>
+                            <form onSubmit={handleSendEventMessage}>
+                                <div style={{ marginBottom: '10px' }}>
+                                    <label htmlFor="eventSelect">Select Event:</label><br />
+                                    <select
+                                        id="eventSelect"
+                                        value={selectedEventId}
+                                        onChange={(e) => setSelectedEventId(e.target.value)}
+                                        style={{ width: '100%', padding: '8px' }}
+                                    >
+                                        <option value="">-- Choose an event --</option>
+                                        {eventList.map(event => (
+                                            <option key={event.event_id} value={event.event_id}>
+                                                {event.name}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+
+                                <div style={{ marginBottom: '10px' }}>
+                                    <label htmlFor="eventMessage">Message:</label><br />
+                                    <textarea
+                                        id="eventMessage"
+                                        rows="4"
+                                        value={eventMessage}
+                                        onChange={(e) => setEventMessage(e.target.value)}
+                                        style={{ width: '100%', padding: '8px' }}
+                                        placeholder="Write your message here..."
+                                    ></textarea>
+                                </div>
+
+                                <button type="submit" style={{ padding: '10px 20px' }}>
+                                    Send Message
+                                </button>
+                            </form>
+
+                            {eventMessageStatus && (
+                                <div style={{
+                                    marginTop: '10px',
+                                    color: eventMessageStatus.toLowerCase().includes('fail') ? 'red' : 'green'
+                                }}>
+                                    {eventMessageStatus}
+                                </div>
+                            )}
+                        </div>
+
+                       
                         {showForm && (
                             <form onSubmit={handleSubmit} style={{
                                 marginTop: '20px',
